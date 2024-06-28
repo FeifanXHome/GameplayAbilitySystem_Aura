@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "Common/MyScriptInterface.h"
 #include "AuraPlayerController.generated.h"
 
 class UInputMappingContext;
@@ -38,7 +39,7 @@ private:
 
 	void CursorTrace();
 	
-	TScriptInterface<IEnemyInterface> LastActor;
-	TScriptInterface<IEnemyInterface> ThisActor;
+	MyTScriptInterface<IEnemyInterface> LastActor;
+	MyTScriptInterface<IEnemyInterface> ThisActor;
 	
 };
