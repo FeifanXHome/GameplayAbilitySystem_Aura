@@ -83,8 +83,9 @@ void AAuraPlayerController::BeginPlay()
 	check(AuraContext);
 
 	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
-	check(Subsystem);
-	Subsystem->AddMappingContext(AuraContext, 0);
+	//check(Subsystem);
+	// Subsystem would be null in case for multiplayer (32. Overlay Widget Controller 25:50)
+	if (Subsystem) Subsystem->AddMappingContext(AuraContext, 0); 
 
 	bShowMouseCursor = true;
 	DefaultMouseCursor = EMouseCursor::Default;
