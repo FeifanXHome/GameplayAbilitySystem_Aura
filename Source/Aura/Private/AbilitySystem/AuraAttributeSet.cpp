@@ -25,20 +25,41 @@ void UAuraAttributeSet::GetLifetimeReplicatedProps(TArray<class FLifetimePropert
 	DOREPLIFETIME_CONDITION_NOTIFY(UAuraAttributeSet, MaxMana,   COND_None, REPNOTIFY_Always);
 }
 
-void UAuraAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
+void UAuraAttributeSet::ClampAttributes(const FGameplayAttribute& Attribute, float& NewValue) const
 {
-	Super::PreAttributeBaseChange(Attribute, NewValue);
-
+	//UE_LOG(LogTemp, Warning, TEXT("[ClampAttributes]:1: %s: %f -> %f"), *Attribute.AttributeName, Attribute.GetNumericValue(this), NewValue);
 	if (Attribute == GetHealthAttribute())
 	{
 		NewValue = FMath::Clamp(NewValue, 0.f, GetMaxHealth());
-		//UE_LOG(LogTemp, Warning, TEXT("Health: %f -> %f"), GetHealth(), NewValue);
+		//UE_LOG(LogTemp, Warning, TEXT("[ClampAttributes]:2: Health: %f -> %f"), GetHealth(), NewValue);
 	}
 	if (Attribute == GetManaAttribute())
 	{
 		NewValue = FMath::Clamp(NewValue, 0.f, GetMaxMana());
-		//UE_LOG(LogTemp, Warning, TEXT("Mana: %f -> %f"), GetMana(), NewValue);
+		//UE_LOG(LogTemp, Warning, TEXT("[ClampAttributes]:2: Mana: %f -> %f"), GetMana(), NewValue);
 	}
+}
+
+void UAuraAttributeSet::PreAttributeBaseChange(const FGameplayAttribute& Attribute, float& NewValue) const
+{
+	Super::PreAttributeBaseChange(Attribute, NewValue);
+	ClampAttributes(Attribute, NewValue);
+}
+
+void UAuraAttributeSet::PostAttributeBaseChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue) const
+{
+	Super::PostAttributeBaseChange(Attribute, OldValue, NewValue);
+}
+
+void UAuraAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
+{
+	Super::PreAttributeChange(Attribute, NewValue);
+	ClampAttributes(Attribute, NewValue);
+}
+
+void UAuraAttributeSet::PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue)
+{
+	Super::PostAttributeChange(Attribute, OldValue, NewValue);
 }
 
 void UAuraAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const
@@ -81,14 +102,17 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	FEffectProperties Props;
 	SetEffectProperties(Data, Props);
 
-	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
+// 	UE_LOG(LogTemp, Warning, TEXT("[PostGameplayEffectExecute]:1: Health: %f"), GetHealth());
+// 	UE_LOG(LogTemp, Warning, TEXT("[PostGameplayEffectExecute]:2: %s: %f   %s"), *Data.EvaluatedData.Attribute.AttributeName, Data.EvaluatedData.Attribute.GetNumericValue(this), *Data.EffectSpec.ToSimpleString());
+	
+	/*if (Data.EvaluatedData.Attribute == GetHealthAttribute())
 	{
 		SetHealth(FMath::Clamp(GetHealth(), 0.f, GetMaxHealth()));
 	}
 	if (Data.EvaluatedData.Attribute == GetManaAttribute())
 	{
 		SetMana(FMath::Clamp(GetMana(), 0.f, GetMaxMana()));
-	}
+	}*/
 }
 
 void UAuraAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth) const
