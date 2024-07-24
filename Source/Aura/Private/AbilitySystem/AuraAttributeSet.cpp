@@ -9,7 +9,7 @@
 
 UAuraAttributeSet::UAuraAttributeSet()
 {
-	InitHealth(45.f);
+	InitHealth(10.f);
 	InitMaxHealth(100.f);
 	InitMana(10.f);
 	InitMaxMana(50.f);
@@ -35,7 +35,7 @@ void UAuraAttributeSet::ClampAttributes(const FGameplayAttribute& Attribute, flo
 	//UE_LOG(LogTemp, Warning, TEXT("[ClampAttributes]:1: %s: %f -> %f"), *Attribute.AttributeName, Attribute.GetNumericValue(this), NewValue);
 	if (Attribute == GetHealthAttribute())
 	{
-		NewValue = FMath::Clamp(NewValue, 0.f, GetMaxHealth());
+		//NewValue = FMath::Clamp(NewValue, 0.f, GetMaxHealth());
 		//UE_LOG(LogTemp, Warning, TEXT("[ClampAttributes]:2: Health: %f -> %f"), GetHealth(), NewValue);
 	}
 	if (Attribute == GetManaAttribute())
