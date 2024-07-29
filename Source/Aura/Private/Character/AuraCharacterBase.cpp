@@ -49,7 +49,8 @@ void AAuraCharacterBase::ApplayEffectToSelf(TSubclassOf<UGameplayEffect> Gamepla
 
 void AAuraCharacterBase::InitializeDefaultAttributes() const
 {
-	ApplayEffectToSelf(DefaultPrimaryAttributes, 1.0);
-	ApplayEffectToSelf(DefaultSecondaryAttributes, 1.0);
+	ApplayEffectToSelf(DefaultPrimaryAttributes, 1.f);
+	ApplayEffectToSelf(DefaultSecondaryAttributes, 1.f);
+	ApplayEffectToSelf(DefaultVitalAttributes, 1.f);
 }
 
