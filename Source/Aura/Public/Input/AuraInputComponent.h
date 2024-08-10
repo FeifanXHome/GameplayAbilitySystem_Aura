@@ -17,16 +17,16 @@ class AURA_API UAuraInputComponent : public UEnhancedInputComponent
 	
 public:
 	template<typename UserClass, class PressedFunctype, typename ReleasedFunctype, typename HeldFuncType>
-	void BindAbilityActions(const UAuraInputConfig* Inputconfig, UserClass* Object, PressedFunctype PressedFunc, ReleasedFunctype ReleasedFunc, HeldFuncType HeldFunc);
+	void BindAbilityActions(const UAuraInputConfig* InputConfig, UserClass* Object, PressedFunctype PressedFunc, ReleasedFunctype ReleasedFunc, HeldFuncType HeldFunc);
 };
 
 template<typename UserClass, class PressedFunctype, typename ReleasedFunctype, typename HeldFuncType>
-inline void UAuraInputComponent::BindAbilityActions(const UAuraInputConfig* Inputconfig, UserClass* Object, 
+inline void UAuraInputComponent::BindAbilityActions(const UAuraInputConfig* InputConfig, UserClass* Object, 
 	PressedFunctype PressedFunc, ReleasedFunctype ReleasedFunc, HeldFuncType HeldFunc)
 {
-	check(Inputconfig);
+	check(InputConfig);
 
-	for (const FAuraInputAction& Action : Inputconfig->AbilityInputAction)
+	for (const FAuraInputAction& Action : InputConfig->AbilityInputAction)
 	{
 		if (Action.InputAction && Action.InputTag.IsValid())
 		{
