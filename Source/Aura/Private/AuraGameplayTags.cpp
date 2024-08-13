@@ -79,7 +79,7 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 		FName("InputTag.LMB"),
 		FString("Input Tag for Left Mouse Button")
 	);
-	GameplayTags.InputTag_LMB = UGameplayTagsManager::Get().AddNativeGameplayTag(
+	GameplayTags.InputTag_RMB = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("InputTag.RMB"),
 		FString("Input Tag for Right Mouse Button")
 	);
