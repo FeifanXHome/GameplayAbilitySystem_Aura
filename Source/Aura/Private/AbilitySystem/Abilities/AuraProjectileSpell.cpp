@@ -11,6 +11,9 @@ void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
+	//HasAuthority(&ActivationInfo);
+	//HasAuthority(&GetCurrentActivationInfo());
+
 	//FGameplayTag EventTag = FGameplayTag::RequestGameplayTag(FName(TEXT("Event.Montage.FireBolt")), true);
 	//UAbilityTask_WaitGameplayEvent* WaitGameplayEvent = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, EventTag);
 	//WaitGameplayEvent->EventReceived.AddDynamic(this, &UAuraProjectileSpell::OnReceivedEvent);
