@@ -138,14 +138,14 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 // 	UE_LOG(LogTemp, Warning, TEXT("[PostGameplayEffectExecute]:1: Health: %f"), GetHealth());
 // 	UE_LOG(LogTemp, Warning, TEXT("[PostGameplayEffectExecute]:2: %s: %f   %s"), *Data.EvaluatedData.Attribute.AttributeName, Data.EvaluatedData.Attribute.GetNumericValue(this), *Data.EffectSpec.ToSimpleString());
 	
-	/*if (Data.EvaluatedData.Attribute == GetHealthAttribute())
+	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
 	{
-		SetHealth(FMath::Clamp(GetHealth(), 0.f, GetMaxHealth()));
+		UE_LOG(LogTemp, Warning, TEXT("Changed Health on %s, Health: %f"), *Props.TargetAvatarActor->GetName(), GetHealth());
 	}
 	if (Data.EvaluatedData.Attribute == GetManaAttribute())
 	{
-		SetMana(FMath::Clamp(GetMana(), 0.f, GetMaxMana()));
-	}*/
+		
+	}
 }
 
 /*
