@@ -38,6 +38,7 @@ void AAuraEffectActor::ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGam
 		const bool bIsInfinite = EffectSpecHandle.Data->Def->DurationPolicy == EGameplayEffectDurationType::Infinite;
 		if (bIsInfinite)
 		{
+			check(!ActiveEffectHandles.Contains(ActiveEffectHandle));
 			ActiveEffectHandles.Add(ActiveEffectHandle, TargetASC);
 		}
 	}
