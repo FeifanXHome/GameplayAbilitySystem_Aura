@@ -10,6 +10,8 @@
 #include "Aura/Aura.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
+
 
 AAuraProjectile::AAuraProjectile()
 {
@@ -47,8 +49,15 @@ void AAuraProjectile::Destroyed()
 	{
 		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
-		LoopingSoundComponent->Stop();
 	}
+		if (IsValid(LoopingSoundComponent))
+		{
+			LoopingSoundComponent->Stop();
+		}
+		else
+		{
+			UKismetSystemLibrary::PrintString(this, FString(TEXT("Destroyed*******")), true, true, FLinearColor::Red, 3.f);
+		}
 
 	Super::Destroyed();
 }
