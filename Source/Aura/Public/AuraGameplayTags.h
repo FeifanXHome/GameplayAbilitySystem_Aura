@@ -42,8 +42,11 @@ public:
 	FGameplayTag InputTag_3;
 	FGameplayTag InputTag_4;
 
-	// Gameplay Effect -> Modifiers -> Modifier Magnitude -> Magnitude Calculation Type -> Set by Caller
+	// [GE_Damage]: Gameplay Effect -> Modifiers -> Modifier Magnitude -> Magnitude Calculation Type -> Set by Caller
 	FGameplayTag Damage;
+
+	// [GE_HitReact]: Gameplay Effect -> GrantedTags
+	FGameplayTag Effects_HitReact;
 
 private:
 	static FAuraGameplayTags GameplayTags;
