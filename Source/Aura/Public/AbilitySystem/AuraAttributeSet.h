@@ -225,4 +225,5 @@ public:
 private:
 	void ClampAttributes(const FGameplayAttribute& Attribute, float& NewValue) const;
 	void SetEffectProperties(const struct FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const;
+	void ShowFloatingText(const FEffectProperties& Props, float Damage) const;
 };
