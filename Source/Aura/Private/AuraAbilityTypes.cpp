@@ -5,5 +5,8 @@
 
 bool FAuraGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bool& bOutSuccess)
 {
-	return false;
+	Super::NetSerialize(Ar, Map, bOutSuccess);
+	Ar << bIsBlockedHit;
+	Ar << bIsCriticalHit;
+	return true;
 }
