@@ -45,6 +45,11 @@ public:
 	// [GE_Damage]: Gameplay Effect -> Modifiers -> Modifier Magnitude -> Magnitude Calculation Type -> Set by Caller
 	FGameplayTag Damage;
 
+	// [DamageType]: Fire
+	FGameplayTag Damage_Fire;
+
+	TArray<FGameplayTag> DamageTypes;
+
 	// [GE_HitReact]: Gameplay Effect -> GrantedTags
 	FGameplayTag Effects_HitReact;
 

@@ -103,11 +103,21 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	/**
 	 * Gameplay Effect
 	 */
+	// [GE_Damage]: Gameplay Effect -> Modifiers -> Modifier Magnitude -> Magnitude Calculation Type -> Set by Caller
 	GameplayTags.Damage = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Damage"),
 		FString("Damage")
 	);
 
+	// [DamageType]: Fire
+	GameplayTags.Damage_Fire = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Damage.Fire"),
+		FString("Fire Damage Type")
+	);
+
+	GameplayTags.DamageTypes.Add(GameplayTags.Damage_Fire);
+
+	// [GE_HitReact]: Gameplay Effect -> GrantedTags
 	GameplayTags.Effects_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Effects.HitReact"),
 		FString("Tag granted when Hit Reacting")
