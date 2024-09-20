@@ -34,6 +34,11 @@ public:
 	FGameplayTag Attributes_Secondary_MaxHealth;
 	FGameplayTag Attributes_Secondary_MaxMana;
 
+	FGameplayTag Attributes_Resistance_Fire;
+	FGameplayTag Attributes_Resistance_Lightning;
+	FGameplayTag Attributes_Resistance_Arcane;
+	FGameplayTag Attributes_Resistance_Physical;
+
 	// Input Tags
 	FGameplayTag InputTag_LMB;
 	FGameplayTag InputTag_RMB;
@@ -42,16 +47,17 @@ public:
 	FGameplayTag InputTag_3;
 	FGameplayTag InputTag_4;
 
-	// [GE_Damage]: Gameplay Effect -> Modifiers -> Modifier Magnitude -> Magnitude Calculation Type -> Set by Caller
-	FGameplayTag Damage;
-
-	// [DamageType]: Fire
+	// Damage Type
+	FGameplayTag Damage; // [GE_Damage]: Gameplay Effect -> Modifiers -> Modifier Magnitude -> Magnitude Calculation Type -> Set by Caller
 	FGameplayTag Damage_Fire;
+	FGameplayTag Damage_Lightning;
+	FGameplayTag Damage_Arcane;
+	FGameplayTag Damage_Physical;
 
-	TArray<FGameplayTag> DamageTypes;
+	TMap<FGameplayTag, FGameplayTag> DamageTypesToResistance;
 
-	// [GE_HitReact]: Gameplay Effect -> GrantedTags
-	FGameplayTag Effects_HitReact;
+	// Effects
+	FGameplayTag Effects_HitReact; // [GE_HitReact]: Gameplay Effect -> GrantedTags
 
 private:
 	static FAuraGameplayTags GameplayTags;
