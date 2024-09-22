@@ -65,16 +65,29 @@ void AAuraProjectile::Destroyed()
 void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, 
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
-	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
-	
-	if (IsValid(LoopingSoundComponent))
+	// DamageEffectSpecHandle is only being set on server in UAuraProjectileSpell::SpawnProjectile
+	// DamageEffectSpecHandle should be null on clients
+	if (DamageEffectSpecHandle.IsValid())
 	{
-		LoopingSoundComponent->Stop();
+		if (DamageEffectSpecHandle.Data->GetContext().GetEffectCauser() == OtherActor)
+		{
+			return;
+		}
 	}
-	else
+
+	if (!bHit)
 	{
-		UKismetSystemLibrary::PrintString(this, FString(TEXT("OnSphereOverlap*******")), true, true, FLinearColor::Red, 3.f);
+		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
+
+		if (IsValid(LoopingSoundComponent))
+		{
+			LoopingSoundComponent->Stop();
+		}
+		else
+		{
+			UKismetSystemLibrary::PrintString(this, FString(TEXT("OnSphereOverlap*******")), true, true, FLinearColor::Red, 3.f);
+		}
 	}
 
 	if (HasAuthority())
