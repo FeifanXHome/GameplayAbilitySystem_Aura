@@ -10,6 +10,11 @@
 #include "AbilitySystemComponent.h"
 #include "AuraAbilityTypes.h"
 
+int UAuraAbilitySystemLibrary::Debug(int flag, UObject* Object, FString String)
+{
+	return 0;
+}
+
 UOverlayWidgetController* UAuraAbilitySystemLibrary::GetOverlayWidgetController(const UObject* WorldContextObject)
 {
 	if (APlayerController* PC = UGameplayStatics::GetPlayerController(WorldContextObject, 0))
