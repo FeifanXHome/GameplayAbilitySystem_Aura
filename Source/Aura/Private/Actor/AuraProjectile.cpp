@@ -44,9 +44,9 @@ void AAuraProjectile::BeginPlay()
 	
 	UKismetSystemLibrary::PrintString(this, FString(TEXT("AAuraProjectile::BeginPlay")), true, true, FLinearColor::Red, 3.f);
 
-	FString msg = FString::Printf(TEXT("BeginPlay Location: %s"), *GetActorLocation().ToString());
-	UKismetSystemLibrary::PrintString(this, msg, true, true, FLinearColor::Red, 3.f);
+	LoopingSoundComponent = UGameplayStatics::SpawnSoundAttached(LoopingSound, GetRootComponent());
 
+	// adjust the location on clients
 	if (!DamageEffectSpecHandle.IsValid())
 	{
 		check(!HasAuthority());
@@ -64,8 +64,6 @@ void AAuraProjectile::BeginPlay()
 			}
 		}
 	}
-
-	LoopingSoundComponent = UGameplayStatics::SpawnSoundAttached(LoopingSound, GetRootComponent());
 }
 
 void AAuraProjectile::Destroyed()
