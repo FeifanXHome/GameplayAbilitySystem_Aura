@@ -11,6 +11,8 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Interaction/CombatInterface.h"
+#include "Player/AuraPlayerState.h"
 
 
 AAuraProjectile::AAuraProjectile()
@@ -39,6 +41,29 @@ void AAuraProjectile::BeginPlay()
 	Super::BeginPlay();
 	SetLifeSpan(lifeSpan);
 	Sphere->OnComponentBeginOverlap.AddDynamic(this, &AAuraProjectile::OnSphereOverlap);
+	
+	UKismetSystemLibrary::PrintString(this, FString(TEXT("AAuraProjectile::BeginPlay")), true, true, FLinearColor::Red, 3.f);
+
+	FString msg = FString::Printf(TEXT("BeginPlay Location: %s"), *GetActorLocation().ToString());
+	UKismetSystemLibrary::PrintString(this, msg, true, true, FLinearColor::Red, 3.f);
+
+	if (!DamageEffectSpecHandle.IsValid())
+	{
+		check(!HasAuthority());
+
+		const AAuraPlayerState* AuraPlayerState = GetOwner<AAuraPlayerState>();
+		if (AuraPlayerState)
+		{
+			ICombatInterface* CombatInterface = Cast<ICombatInterface>(AuraPlayerState->GetAbilitySystemComponent()->GetAvatarActor());
+			if (CombatInterface)
+			{
+				const FVector SocketLocation = CombatInterface->GetCombatSocketLocation();
+				//FString msg2 = FString::Printf(TEXT("BeginPlay Owner Location: %s, %p"), *SocketLocation.ToString(), CombatInterface);
+				//UKismetSystemLibrary::PrintString(this, msg2, true, true, FLinearColor::Red, 3.f);
+				this->SetActorLocation(SocketLocation);
+			}
+		}
+	}
 
 	LoopingSoundComponent = UGameplayStatics::SpawnSoundAttached(LoopingSound, GetRootComponent());
 }
@@ -72,6 +97,21 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 		if (DamageEffectSpecHandle.Data->GetContext().GetEffectCauser() == OtherActor)
 		{
 			return;
+		}
+	}
+	
+	if (!DamageEffectSpecHandle.IsValid())
+	{
+		check(!HasAuthority());
+
+		const AAuraPlayerState* AuraPlayerState = GetOwner<AAuraPlayerState>();
+		if (AuraPlayerState)
+		{
+			AActor* AvatarActor = (AuraPlayerState->GetAbilitySystemComponent()->GetAvatarActor());
+			if (AvatarActor == OtherActor)
+			{
+				return;
+			}
 		}
 	}
 
