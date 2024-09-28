@@ -34,6 +34,9 @@ void AAuraCharacter::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
 
+	//const ENetMode NetMode = GetNetMode();
+	GetNetConnection()->SetAutoFlush(true);
+
 	// Init ability actor info for the Client
 	InitAbilityActorInfo();
 }

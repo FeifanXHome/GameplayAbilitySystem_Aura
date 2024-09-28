@@ -42,8 +42,6 @@ void AAuraProjectile::BeginPlay()
 	SetLifeSpan(lifeSpan);
 	Sphere->OnComponentBeginOverlap.AddDynamic(this, &AAuraProjectile::OnSphereOverlap);
 	
-	UKismetSystemLibrary::PrintString(this, FString(TEXT("AAuraProjectile::BeginPlay")), true, true, FLinearColor::Red, 3.f);
-
 	LoopingSoundComponent = UGameplayStatics::SpawnSoundAttached(LoopingSound, GetRootComponent());
 
 	// adjust the location on clients
@@ -60,7 +58,7 @@ void AAuraProjectile::BeginPlay()
 				const FVector SocketLocation = CombatInterface->GetCombatSocketLocation();
 				//FString msg2 = FString::Printf(TEXT("BeginPlay Owner Location: %s, %p"), *SocketLocation.ToString(), CombatInterface);
 				//UKismetSystemLibrary::PrintString(this, msg2, true, true, FLinearColor::Red, 3.f);
-				this->SetActorLocation(SocketLocation);
+				//this->SetActorLocation(SocketLocation);
 			}
 		}
 	}
