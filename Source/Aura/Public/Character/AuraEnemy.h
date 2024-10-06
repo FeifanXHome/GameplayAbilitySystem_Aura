@@ -28,13 +28,13 @@ public:
 	/** Enemy Interface */
 	virtual void HighlightActor() override;
 	virtual void UnHighlightActor() override;
+	virtual void SetCombatTarget_Implementation(AActor* InCombatTarget) override;
+	AActor* GetCombatTarget_Implementation() const override;
 	/** end Enemy Interface */
 
 	/** Combat Interface */
 	virtual int32 GetPlayerLevel() override;
 	virtual void Die() override; // called specifically on the server
-	virtual void SetCombatTarget_Implementation(AActor* InCombatTarget) override;
-	AActor* GetCombatTarget_Implementation() const override;
 	/** end Combat Interface */
 
 	UPROPERTY(BlueprintAssignable)

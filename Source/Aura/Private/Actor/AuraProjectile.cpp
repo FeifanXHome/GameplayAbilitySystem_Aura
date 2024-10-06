@@ -55,7 +55,7 @@ void AAuraProjectile::BeginPlay()
 			ICombatInterface* CombatInterface = Cast<ICombatInterface>(AuraPlayerState->GetAbilitySystemComponent()->GetAvatarActor());
 			if (CombatInterface)
 			{
-				const FVector SocketLocation = CombatInterface->GetCombatSocketLocation();
+				//const FVector SocketLocation = CombatInterface->Execute_GetCombatSocketLocation(AuraPlayerState->GetAbilitySystemComponent()->GetAvatarActor());
 				//FString msg2 = FString::Printf(TEXT("BeginPlay Owner Location: %s, %p"), *SocketLocation.ToString(), CombatInterface);
 				//UKismetSystemLibrary::PrintString(this, msg2, true, true, FLinearColor::Red, 3.f);
 				//this->SetActorLocation(SocketLocation);
