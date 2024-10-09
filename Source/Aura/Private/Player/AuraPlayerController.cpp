@@ -80,19 +80,17 @@ void AAuraPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 		bTargeting = ThisActor ? true : false;
 		bAutoRunning = false;
 	}
+	else if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_RMB))
+	{
+		bAutoRunning = false;
+	}
 }
 
 void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 {
-	if (!InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
-	{
-		if (GetASC()) GetASC()->AbilityInputTagReleased(InputTag);
-		return;
-	}
-
 	if (GetASC()) GetASC()->AbilityInputTagReleased(InputTag);
 	
-	if (!bTargeting && !bShiftKeyDown)
+	if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_RMB))
 	{
 		const APawn* ControlledPawn = GetPawn();
 		if (FollowTime <= ShortPressThreshold && ControlledPawn)
@@ -120,17 +118,19 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 
 void AAuraPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 {
-	if (! InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
+	if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
 	{
-		if (GetASC()) GetASC()->AbilityInputTagHeld(InputTag);
-		return;
-	}
-
-	if (bTargeting || bShiftKeyDown)
-	{
-		if (GetASC()) GetASC()->AbilityInputTagHeld(InputTag);
+		if (bTargeting || bShiftKeyDown)
+		{
+			if (GetASC()) GetASC()->AbilityInputTagHeld(InputTag);
+		}
 	}
 	else
+	{
+		if (GetASC()) GetASC()->AbilityInputTagHeld(InputTag);
+	}
+	
+	if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_RMB))
 	{
 		FollowTime += GetWorld()->GetDeltaSeconds();
 
