@@ -174,3 +174,13 @@ void UAuraAbilitySystemLibrary::GetLivePlayersWithinRadius(const UObject* WorldC
 		}
 	}
 }
+
+bool UAuraAbilitySystemLibrary::IsNotFriend(AActor* FirstActor, AActor* SecondActor)
+{
+	const FName PlayerTag(TEXT("Player"));
+	const FName EnemyTag (TEXT("Enemy"));
+	const bool bBothArePlayers = FirstActor->ActorHasTag(PlayerTag) && SecondActor->ActorHasTag(PlayerTag);
+	const bool bBothAreEnemies = FirstActor->ActorHasTag(EnemyTag)  && SecondActor->ActorHasTag(EnemyTag);
+	const bool bFriends = bBothAreEnemies || bBothAreEnemies;
+	return !bFriends;
+}
