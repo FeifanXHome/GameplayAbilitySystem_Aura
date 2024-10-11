@@ -85,16 +85,20 @@ FVector AAuraCharacterBase::GetCombatSocketLocation_Implementation(const FGamepl
 	if (MontageTag.MatchesTagExact(GameplayTags.Montage_Attack_Weapon))
 	{
 		check(Weapon);
+		checkf(Weapon->DoesSocketExist(WeaponTipSocketName), TEXT("[Weapon]:: [%s] does not exist on mesh [%s] of [%s] !"), *WeaponTipSocketName.ToString(), *Weapon->GetName(), *this->GetName())
 		return Weapon->GetSocketLocation(WeaponTipSocketName);
 	}
 	if (MontageTag.MatchesTagExact(GameplayTags.Montage_Attack_LeftHand))
 	{
+		checkf(GetMesh()->DoesSocketExist(LeftHandSocketName), TEXT("[LeftHand]:: [%s] does not exist on mesh [%s] of [%s] !"), *LeftHandSocketName.ToString(), *GetMesh()->GetName(), *this->GetName())
 		return GetMesh()->GetSocketLocation(LeftHandSocketName);
 	}
 	if (MontageTag.MatchesTagExact(GameplayTags.Montage_Attack_RightHand))
 	{
+		checkf(GetMesh()->DoesSocketExist(RightHandSocketName), TEXT("[RightHand]:: [%s] does not exist on mesh [%s] of [%s] !"), *RightHandSocketName.ToString(), *GetMesh()->GetName(), *this->GetName())
 		return GetMesh()->GetSocketLocation(RightHandSocketName);
 	}
+	checkf(false, TEXT("[GetCombatSocketLocation]:: Type [%s] does not exist !"), *MontageTag.ToString())
 	return FVector();
 }
 

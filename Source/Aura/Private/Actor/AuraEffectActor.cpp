@@ -27,7 +27,13 @@ void AAuraEffectActor::ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGam
 	if (TargetActor->ActorHasTag(TEXT("Enemy")) && !bApplyEffectsToEnemies) return;
 
 	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
-	check(TargetASC);
+	/**
+	* BP_SlingshotRock 
+	* Option 1: Remove the simplified collision of the static mesh for RockMesh
+	*			- The overlapping event will happen only if the static mesh has the simplified collision.
+	* Option 2: Set Generate Overlap Events to False for RockMesh
+	*/ 
+	check(TargetASC); 
 	if (TargetASC == nullptr) return;
 
 	check(GameplayEffectClass);
