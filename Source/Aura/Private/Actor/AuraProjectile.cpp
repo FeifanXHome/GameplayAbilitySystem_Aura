@@ -13,7 +13,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Interaction/CombatInterface.h"
 #include "Player/AuraPlayerState.h"
-
+#include "AbilitySystem/AuraAbilitySystemLibrary.h"
 
 AAuraProjectile::AAuraProjectile()
 {
@@ -90,7 +90,12 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 	// DamageEffectSpecHandle should be null on clients
 	if (DamageEffectSpecHandle.IsValid())
 	{
-		if (DamageEffectSpecHandle.Data->GetContext().GetEffectCauser() == OtherActor)
+		AActor* EffectCauser = DamageEffectSpecHandle.Data->GetContext().GetEffectCauser();
+		if (EffectCauser == OtherActor)
+		{
+			return;
+		}
+		if (! UAuraAbilitySystemLibrary::IsNotFriend(EffectCauser, OtherActor))
 		{
 			return;
 		}
@@ -108,8 +113,13 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 			{
 				return;
 			}
+			if (! UAuraAbilitySystemLibrary::IsNotFriend(AvatarActor, OtherActor))
+			{
+				return;
+			}
 		}
 	}
+
 
 	if (!bHit)
 	{
