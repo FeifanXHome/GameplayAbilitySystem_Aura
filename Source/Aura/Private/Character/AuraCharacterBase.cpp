@@ -27,6 +27,7 @@ AAuraCharacterBase::AAuraCharacterBase()
 	// FAttachmentTransformRules TransformRules(EAttachmentRule::SnapToTarget, true);
 	// Weapon->AttachToComponent(InParent, TransformRules, InSocketName);
 	Weapon->SetupAttachment(GetMesh(), FName("WeaponHandSocket"));
+	Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 UAbilitySystemComponent* AAuraCharacterBase::GetAbilitySystemComponent() const
