@@ -7,6 +7,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Aura/Aura.h"
 #include "AuraGameplayTags.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AAuraCharacterBase::AAuraCharacterBase()
@@ -55,6 +56,8 @@ void AAuraCharacterBase::Die()
 // called on all machines, client and server
 void AAuraCharacterBase::MulticastHandleDeath_Implementation()
 {
+	UGameplayStatics::PlaySoundAtLocation(this, DeathSound, GetActorLocation(), GetActorRotation());
+
 	Weapon->SetSimulatePhysics(true);
 	Weapon->SetEnableGravity(true);
 	Weapon->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
