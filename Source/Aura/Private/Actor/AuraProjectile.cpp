@@ -70,15 +70,15 @@ void AAuraProjectile::Destroyed()
 	{
 		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
+		
+		bHit = true;
 	}
-		if (IsValid(LoopingSoundComponent))
-		{
-			LoopingSoundComponent->Stop();
-		}
-		else
-		{
-			UKismetSystemLibrary::PrintString(this, FString(TEXT("Destroyed*******")), true, true, FLinearColor::Red, 3.f);
-		}
+	
+	if (IsValid(LoopingSoundComponent))
+	{
+		LoopingSoundComponent->Stop();
+	}
+	// else{UKismetSystemLibrary::PrintString(this, FString(TEXT("Destroyed*******")), true, true, FLinearColor::Red, 3.f);}
 
 	Super::Destroyed();
 }
@@ -105,6 +105,18 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 	{
 		check(!HasAuthority());
 
+		// Case: Enemy
+		AActor* owner = GetOwner();
+		if (owner == OtherActor)
+		{
+			return;
+		}
+		if (! UAuraAbilitySystemLibrary::IsNotFriend(owner, OtherActor))
+		{
+			return;
+		}
+
+		// Case: Aura
 		const AAuraPlayerState* AuraPlayerState = GetOwner<AAuraPlayerState>();
 		if (AuraPlayerState)
 		{
@@ -120,7 +132,6 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 		}
 	}
 
-
 	if (!bHit)
 	{
 		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
@@ -130,10 +141,9 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 		{
 			LoopingSoundComponent->Stop();
 		}
-		else
-		{
-			UKismetSystemLibrary::PrintString(this, FString(TEXT("OnSphereOverlap*******")), true, true, FLinearColor::Red, 3.f);
-		}
+		// else{UKismetSystemLibrary::PrintString(this, FString(TEXT("OnSphereOverlap*******")), true, true, FLinearColor::Red, 3.f);}
+		
+		bHit = true;
 	}
 
 	if (HasAuthority())
@@ -144,10 +154,6 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 		}
 
 		Destroy();
-	}
-	else
-	{
-		bHit = true;
 	}
 }
 
