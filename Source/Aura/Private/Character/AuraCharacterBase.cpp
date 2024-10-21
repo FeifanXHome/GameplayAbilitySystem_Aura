@@ -102,6 +102,11 @@ FVector AAuraCharacterBase::GetCombatSocketLocation_Implementation(const FGamepl
 		checkf(GetMesh()->DoesSocketExist(RightHandSocketName), TEXT("[RightHand]:: [%s] does not exist on mesh [%s] of [%s] !"), *RightHandSocketName.ToString(), *GetMesh()->GetName(), *this->GetName())
 		return GetMesh()->GetSocketLocation(RightHandSocketName);
 	}
+	if (MontageTag.MatchesTagExact(GameplayTags.CombatSocket_Tail))
+	{
+		checkf(GetMesh()->DoesSocketExist(TailSocketName), TEXT("[Tail]:: [%s] does not exist on mesh [%s] of [%s] !"), *TailSocketName.ToString(), *GetMesh()->GetName(), *this->GetName())
+		return GetMesh()->GetSocketLocation(TailSocketName);
+	}
 	checkf(false, TEXT("[GetCombatSocketLocation]:: Type [%s] does not exist !"), *MontageTag.ToString())
 	return FVector();
 }
