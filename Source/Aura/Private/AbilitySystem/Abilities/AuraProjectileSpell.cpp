@@ -23,17 +23,15 @@ void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 	//WaitGameplayEvent->ReadyForActivation();
 }
 
-void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocation)
+void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag)
 {
-	const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority();
+	AActor* AvatarActor = GetAvatarActorFromActorInfo();
+	const bool bIsServer = AvatarActor->HasAuthority();
 	if (!bIsServer) return;
 
-	check(GetAvatarActorFromActorInfo()->Implements<UCombatInterface>());
-	check(GetAvatarActorFromActorInfo()->GetClass()->ImplementsInterface(UCombatInterface::StaticClass()));
-	const FVector SocketLocation = ICombatInterface::Execute_GetCombatSocketLocation(
-		GetAvatarActorFromActorInfo(), 
-		FAuraGameplayTags::Get().CombatSocket_Weapon
-	);
+	check(AvatarActor->Implements<UCombatInterface>());
+	check(AvatarActor->GetClass()->ImplementsInterface(UCombatInterface::StaticClass()));
+	const FVector SocketLocation = ICombatInterface::Execute_GetCombatSocketLocation(AvatarActor, SocketTag);
 
 	FRotator Rotation = (ProjectileTargetLocation - SocketLocation).Rotation();
 	Rotation.Pitch = 0.f;
