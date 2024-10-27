@@ -17,7 +17,7 @@ class AURA_API UAuraSummonAbility : public UAuraGameplayAbility
 public:
 
 	UFUNCTION(BlueprintCallable)
-	TArray<FVector> GetSpawnLocations();
+	TArray<FVector> GetSpawnLocations(bool IsShowDebugShapes = false);
 
 private:
 
