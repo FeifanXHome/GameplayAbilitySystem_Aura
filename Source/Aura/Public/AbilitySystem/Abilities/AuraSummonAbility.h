@@ -24,8 +24,8 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Summoning")
 	int32 NumMinions = 5;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Summoning")
-	TArray<TSubclassOf<APawn>> NinionClasses;
+	UPROPERTY(EditDefaultsOnly, Category = "Summoning", BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	TArray<TSubclassOf<APawn>> MinionClasses;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Summoning")
 	float MinSpawnDistance = 150.f;
