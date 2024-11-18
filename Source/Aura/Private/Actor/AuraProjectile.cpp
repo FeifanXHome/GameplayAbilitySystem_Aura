@@ -18,6 +18,16 @@
 AAuraProjectile::AAuraProjectile()
 {
 	PrimaryActorTick.bCanEverTick = false;
+
+	/*
+	I want to spawn a projectile on the server.
+	I don't want to spawn this locally.
+	I want this projectile to be a replicated actor.
+	And that way if the server spawns it, then the server will be in charge of moving it, handling its location and all that good stuff,
+	and the clients will just see a replicated version of the projectile.
+	We're going to set bReplicates equal to true.
+	So we now have a replicated projectile class.
+	*/
 	bReplicates = true;
 
 	Sphere = CreateDefaultSubobject<USphereComponent>(TEXT("Spheree"));
