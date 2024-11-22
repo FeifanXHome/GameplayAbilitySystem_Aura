@@ -4,6 +4,7 @@
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/Abilities/AuraGameplayAbility.h"
 #include "Aura/AuraLogChannels.h"
+#include "Net/UnrealNetwork.h"
 
 void UAuraAbilitySystemComponent::AbilityActorInfoSet()
 {
@@ -23,9 +24,19 @@ void UAuraAbilitySystemComponent::AddCharacherAbilities(const TArray<TSubclassOf
 		//GiveAbilityAndActivateOnce(AbilitySpec);
 	}
 
-	bStartupAbilitiesGiven = true;
-	AbilitiesGivenDelegate.Broadcast(this);
+ 	bStartupAbilitiesGiven = true;
+ 	AbilitiesGivenDelegate.Broadcast(this);
 }
+
+// void UAuraAbilitySystemComponent::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
+// {
+// 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+// 
+// 	FDoRepLifetimeParams Params;
+// 	Params.bIsPushBased = true;
+// 	Params.Condition = COND_ReplayOrOwner;
+// 	DOREPLIFETIME_WITH_PARAMS_FAST(UAuraAbilitySystemComponent, bStartupAbilitiesGiven, Params);
+// }
 
 void UAuraAbilitySystemComponent::AbilityInputTagHeld(const FGameplayTag& InputTag)
 {
@@ -107,4 +118,24 @@ void UAuraAbilitySystemComponent::ClientEffectApplied_Implementation(
 	EffectSpec.GetAllAssetTags(TagContainer);
 
 	EffectAssetTags.Broadcast(TagContainer);
+}
+
+void UAuraAbilitySystemComponent::OnRep_ActivateAbilities()
+{
+	Super::OnRep_ActivateAbilities();
+
+	for (FGameplayAbilitySpec& Spec : ActivatableAbilities.Items)
+	{
+		const UGameplayAbility* SpecAbility = Spec.Ability;
+		if (!SpecAbility)
+		{
+			return;
+		}
+	}
+
+	if (! bStartupAbilitiesGiven)
+	{
+		bStartupAbilitiesGiven = true;
+		AbilitiesGivenDelegate.Broadcast(this);
+	}
 }

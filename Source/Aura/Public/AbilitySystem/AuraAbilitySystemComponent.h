@@ -25,7 +25,10 @@ public:
 	FAbilitiesGiven AbilitiesGivenDelegate;
 	
 	void AddCharacherAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupAbilities);
+
+	//UPROPERTY(Replicated)
 	bool bStartupAbilitiesGiven = false;
+	//virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 
 	void AbilityInputTagHeld(const FGameplayTag& InputTag);
 	void AbilityInputTagReleased(const FGameplayTag& InputTag);
@@ -35,7 +38,10 @@ public:
 	static FGameplayTag GetInputTagFromSpec(const FGameplayAbilitySpec& AbilitySpec);
 
 protected:
+
+	virtual void OnRep_ActivateAbilities() override;
+
 	UFUNCTION(Client, Reliable)
 	void ClientEffectApplied(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffecthandle);
-
+	
 };
