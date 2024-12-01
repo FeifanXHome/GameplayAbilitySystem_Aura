@@ -30,7 +30,7 @@ class AURA_API ULevelUpInfo : public UDataAsset
 	GENERATED_BODY()
 	
 public:
-	int32 FindLevelForXP(int32 XP);
+	int32 FindLevelForXP(int32 XP) const;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<FAuraLevelUpInfo> LevelUpInformation;
