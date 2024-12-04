@@ -25,6 +25,7 @@ public:
 	FAbilitiesGiven AbilitiesGivenDelegate;
 	
 	void AddCharacherAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupAbilities);
+	void AddCharacherPassiveAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupPassiveAbilities);
 
 	//UPROPERTY(Replicated)
 	bool bStartupAbilitiesGiven = false;

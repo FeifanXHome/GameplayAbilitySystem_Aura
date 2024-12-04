@@ -187,6 +187,7 @@ void AAuraCharacterBase::AddCharacherAbilities()
 
 	UAuraAbilitySystemComponent* AuraASC = CastChecked<UAuraAbilitySystemComponent>(AbilitySystemComponent);
 	AuraASC->AddCharacherAbilities(StartupAbilities);
+	AuraASC->AddCharacherPassiveAbilities(StartupPassiveAbilities);
 }
 
 void AAuraCharacterBase::Dissolve()
