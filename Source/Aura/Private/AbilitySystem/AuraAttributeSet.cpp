@@ -153,6 +153,7 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 
 	FEffectProperties Props;
 	SetEffectProperties(Data, Props);
+	ACharacter* SourceCharacter = Props.SourceCharacter;
 
 // 	UE_LOG(LogTemp, Warning, TEXT("[PostGameplayEffectExecute]:1: Health: %f"), GetHealth());
 // 	UE_LOG(LogTemp, Warning, TEXT("[PostGameplayEffectExecute]:2: %s: %f   %s"), *Data.EvaluatedData.Attribute.AttributeName, Data.EvaluatedData.Attribute.GetNumericValue(this), *Data.EffectSpec.ToSimpleString());
@@ -205,10 +206,31 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 
 		if (LocalIncomingXP > 0.f)
 		{
-			// TODO: See if we should level up
-			if (Props.SourceCharacter->Implements<UPlayerInterface>())
+			// Source Character is the owner, since GA_ListenForEvents applies GE_EventBasedEffect, adding to IncomingXP
+			if (SourceCharacter->Implements<UPlayerInterface>() && SourceCharacter->Implements<UCombatInterface>())
 			{
-				IPlayerInterface::Execute_AddToXP(Props.SourceCharacter, LocalIncomingXP);
+				const int32 CurrentLevel = ICombatInterface::Execute_GetPlayerLevel(SourceCharacter);
+				const int32 CurrentXP = IPlayerInterface::Execute_GetXP(SourceCharacter);
+
+				const int32 NewLevel = IPlayerInterface::Execute_FindLevelForXP(SourceCharacter, CurrentXP + LocalIncomingXP);
+				const int32 NumLevelUps = NewLevel - CurrentLevel;
+
+				if (NumLevelUps)
+				{
+					const int32 AttributePointsReward = IPlayerInterface::Execute_GetAttributePointsReward(SourceCharacter, CurrentLevel);
+					const int32 SpellPointsReward = IPlayerInterface::Execute_GetSpellPointsReward(SourceCharacter, CurrentLevel);
+
+					IPlayerInterface::Execute_AddToPlayerLevel(SourceCharacter, NumLevelUps);
+					IPlayerInterface::Execute_AddToAttributePoints(SourceCharacter, AttributePointsReward);
+					IPlayerInterface::Execute_AddToSpellPoints(SourceCharacter, SpellPointsReward);
+
+					SetHealth(GetMaxHealth());
+					SetMana(GetMaxMana());
+
+					IPlayerInterface::Execute_LevelUp(SourceCharacter);
+				}
+
+				IPlayerInterface::Execute_AddToXP(SourceCharacter, LocalIncomingXP);
 			}
 		}
 	}
