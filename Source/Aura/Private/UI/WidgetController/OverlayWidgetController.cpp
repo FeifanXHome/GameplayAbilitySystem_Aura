@@ -18,8 +18,8 @@ void UOverlayWidgetController::BroadcastInitialValues()
 	OnManaChanged.Broadcast(AuraAttributeSet->GetMana());
 	OnMaxManaChanged.Broadcast(AuraAttributeSet->GetMaxMana());
 
-	AuraPlayerState->AddToXP(0);
-	AuraPlayerState->AddToLevel(0);
+	OnXPChanged(AuraPlayerState->GetXP());
+	OnPlayerLevelChangedDelegate.Broadcast(AuraPlayerState->GetPlayerLevel());
 }
 
 void UOverlayWidgetController::BindCallbacksToDependencies()
