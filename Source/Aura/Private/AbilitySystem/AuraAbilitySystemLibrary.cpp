@@ -10,6 +10,7 @@
 #include "AbilitySystemComponent.h"
 #include "AuraAbilityTypes.h"
 #include "Interaction/CombatInterface.h"
+#include "Aura/AuraLogChannels.h"
 
 int UAuraAbilitySystemLibrary::Debug(int flag, UObject* Object, FString String)
 {
@@ -153,6 +154,30 @@ void UAuraAbilitySystemLibrary::SetIsCriticalHit(UPARAM(ref)FGameplayEffectConte
 	{
 		return AuraEffectContext->SetIsCriticalHit(bInIsCriticalHit);
 	}
+}
+
+FGameplayEffectSpecHandle UAuraAbilitySystemLibrary::GetAllDataTagsFromSetByCallerMagnitudes(FGameplayEffectSpecHandle SpecHandle, TArray<FGameplayTag>& OutDataTags)
+{
+	FGameplayEffectSpec* Spec = SpecHandle.Data.Get();
+	if (Spec)
+	{
+		for (int32 ModIdx = 0; ModIdx < Spec->Def->Modifiers.Num(); ++ModIdx)
+		{
+			const FGameplayModifierInfo& ModDef = Spec->Def->Modifiers[ModIdx];
+
+			if (ModDef.ModifierMagnitude.GetMagnitudeCalculationType() == EGameplayEffectMagnitudeCalculation::SetByCaller)
+			{
+				const FSetByCallerFloat& SetByCallerFloat = ModDef.ModifierMagnitude.GetSetByCallerFloat();
+				OutDataTags.Add(SetByCallerFloat.DataTag);
+			}
+		}
+	}
+	else
+	{
+		UE_LOG(LogAura, Warning, TEXT("UAuraAbilitySystemLibrary::GetAllDataTagsFromSetByCallerMagnitudes called with invalid SpecHandle"));
+	}
+
+	return SpecHandle;
 }
 
 void UAuraAbilitySystemLibrary::GetLivePlayersWithinRadius(const UObject* WorldContextObject, 
