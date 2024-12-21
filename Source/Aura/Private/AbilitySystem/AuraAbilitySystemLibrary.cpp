@@ -11,10 +11,43 @@
 #include "AuraAbilityTypes.h"
 #include "Interaction/CombatInterface.h"
 #include "Aura/AuraLogChannels.h"
+#include "Components/PanelWidget.h"
+#include "Blueprint/WidgetTree.h"
 
 int UAuraAbilitySystemLibrary::Debug(int flag, UObject* Object, FString String)
 {
 	return 0;
+}
+
+void UAuraAbilitySystemLibrary::GetAllChildWidgetsWidthClass(UWidget* ParentWidget, TArray<UUserWidget*>& FoundWidgets, TSubclassOf<UUserWidget> WidgetClass)
+{
+	if (!ParentWidget || !WidgetClass) return;
+
+	//Prevent possibility of an ever-growing array if user uses this in a loop
+	FoundWidgets.Empty();
+
+	auto FunPredicate = [&FoundWidgets, &WidgetClass](UWidget* Widget)
+		{
+			if (Widget && Widget->GetClass()->IsChildOf(WidgetClass))
+			{
+				if (UUserWidget* UserWidget = Cast<UUserWidget>(Widget))
+				{
+					FoundWidgets.Add(UserWidget);
+				}
+			}
+		};
+
+	if (const UPanelWidget* PanelParent = Cast<UPanelWidget>(ParentWidget))
+	{
+		UWidgetTree::ForWidgetAndChildren(ParentWidget, FunPredicate);
+	}
+	else if (const UUserWidget* UserWidget = Cast<UUserWidget>(ParentWidget))
+	{
+		if (UserWidget->WidgetTree)
+		{
+			UserWidget->WidgetTree->ForEachWidget(FunPredicate);
+		}
+	}
 }
 
 bool UAuraAbilitySystemLibrary::MakeWidgetControllerParams(const UObject* WorldContextObject, FWidgetControllerParams& OutWCParams, AAuraHUD*& OutAuraHUD)
