@@ -37,8 +37,10 @@ void UAuraWidgetController::BroadcastAbilityInfo()
 		{
 			// TODO need a way to figure out the ability tag for a given ability spec.
 			FGameplayTag AbilityTag = UAuraAbilitySystemComponent::GetAbilityTagFromSpec(AbilitySpec);
+
 			FAuraAbilityInfo Info = AbilityInfo->FindAbilityInfoForTag(AbilityTag);
 			Info.InputTag = UAuraAbilitySystemComponent::GetInputTagFromSpec(AbilitySpec);
+			Info.StatusTag = UAuraAbilitySystemComponent::GetStatusFromSpec(AbilitySpec);
 
 			AbilityInfoDelegate.Broadcast(Info);
 		}
