@@ -24,6 +24,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "XXX|Debug")
 	static int Debug(int flag, UObject* Object, FString String);
 
+	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "AuraAbilitySystemLibrary|Widget", meta = (DeterminesOutputType = "WidgetClass", DynamicOutputParam = "FoundWidgets"))
+	static void GetAllChildWidgetsWidthClass2(const TArray<UWidget*>& ParentWidgets, TArray<UUserWidget*>& FoundWidgets, TSubclassOf<UUserWidget> WidgetClass);
+
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "AuraAbilitySystemLibrary|Widget", meta = (DefaultToSelf = "ParentWidget", DeterminesOutputType = "WidgetClass", DynamicOutputParam = "FoundWidgets"))
 	static void GetAllChildWidgetsWidthClass(UWidget* ParentWidget, TArray<UUserWidget*>& FoundWidgets, TSubclassOf<UUserWidget> WidgetClass);
 

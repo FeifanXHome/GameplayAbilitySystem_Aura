@@ -19,6 +19,21 @@ int UAuraAbilitySystemLibrary::Debug(int flag, UObject* Object, FString String)
 	return 0;
 }
 
+void UAuraAbilitySystemLibrary::GetAllChildWidgetsWidthClass2(const TArray<UWidget*>& ParentWidgets, TArray<UUserWidget*>& FoundWidgets, TSubclassOf<UUserWidget> WidgetClass)
+{
+	if (ParentWidgets.IsEmpty() || !WidgetClass) return;
+
+	//Prevent possibility of an ever-growing array if user uses this in a loop
+	FoundWidgets.Empty();
+
+	for (auto Parent : ParentWidgets)
+	{
+		TArray<UUserWidget*> FoundWidgets_;
+		GetAllChildWidgetsWidthClass(Parent, FoundWidgets_, WidgetClass);
+		FoundWidgets.Append(FoundWidgets_);
+	}
+}
+
 void UAuraAbilitySystemLibrary::GetAllChildWidgetsWidthClass(UWidget* ParentWidget, TArray<UUserWidget*>& FoundWidgets, TSubclassOf<UUserWidget> WidgetClass)
 {
 	if (!ParentWidget || !WidgetClass) return;
