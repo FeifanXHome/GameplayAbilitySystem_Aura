@@ -5,7 +5,6 @@
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/Data/AbilityInfo.h"
 #include "Player/AuraPlayerState.h"
-#include "AuraGameplayTags.h"
 
 void USpellMenuWidgetController::BroadcastInitialValues()
 {
@@ -15,21 +14,34 @@ void USpellMenuWidgetController::BroadcastInitialValues()
 
 void USpellMenuWidgetController::BindCallbacksToDependencies()
 {
-	GetAuraPS()->OnSpellPointsChangedDelegate.
-		AddLambda(
-			[this](int32 NewLevel)
-			{
-				OnSpellPointsChangedDelegate.Broadcast(NewLevel);
-			}
+	GetAuraPS()->OnSpellPointsChangedDelegate.AddLambda(
+		[this](int32 SpellPoints)
+		{
+			OnSpellPointsChangedDelegate.Broadcast(SpellPoints);
+
+			CurrentSpellPoints = SpellPoints;
+			BroadcastSpellGlobeSelectedDelegate();
+		}
 	);
 
 	GetAuraASC()->AbilityStatusChanged.AddLambda(
 		[this](const FGameplayTag& AbilityTag, const FGameplayTag& StatusTag)
 		{
-			FAuraAbilityInfo Info = AbilityInfo->FindAbilityInfoForTag(AbilityTag);
-			Info.StatusTag = StatusTag;
+			//
+			if (AbilityInfo)
+			{
+				FAuraAbilityInfo Info = AbilityInfo->FindAbilityInfoForTag(AbilityTag);
+				Info.StatusTag = StatusTag;
 
-			AbilityInfoDelegate.Broadcast(Info);
+				AbilityInfoDelegate.Broadcast(Info);
+			}
+
+			//
+			if (SelectedAbility.Ability.MatchesTagExact(AbilityTag))
+			{
+				SelectedAbility.Status = StatusTag;
+				BroadcastSpellGlobeSelectedDelegate();
+			}
 		}
 	);
 }
@@ -54,9 +66,19 @@ void USpellMenuWidgetController::SpellGlobeSelected(const FGameplayTag& AbilityT
 		AbilityStatus = GetAuraASC()->GetStatusFromSpec(*AbilitySpec);
 	}
 
+	SelectedAbility.Ability = AbilityTag;
+	SelectedAbility.Status = AbilityStatus;
+	CurrentSpellPoints = SpellPoints;
+
+	BroadcastSpellGlobeSelectedDelegate();
+
+}
+
+void USpellMenuWidgetController::BroadcastSpellGlobeSelectedDelegate()
+{
 	bool bEnableSpendPointsButton = false;
 	bool bEnableEquipButton = false;
-	ShouldEnableButtons(AbilityStatus, SpellPoints, bEnableSpendPointsButton, bEnableEquipButton);
+	ShouldEnableButtons(SelectedAbility.Status, CurrentSpellPoints, bEnableSpendPointsButton, bEnableEquipButton);
 	OnSpellGlobeSelectedDelegate.Broadcast(bEnableSpendPointsButton, bEnableEquipButton);
 }
 
