@@ -25,7 +25,7 @@ void USpellMenuWidgetController::BindCallbacksToDependencies()
 	);
 
 	GetAuraASC()->AbilityStatusChanged.AddLambda(
-		[this](const FGameplayTag& AbilityTag, const FGameplayTag& StatusTag)
+		[this](const FGameplayTag& AbilityTag, const FGameplayTag& StatusTag, int32 NewAbilityLevel)
 		{
 			//
 			if (AbilityInfo)
@@ -72,6 +72,11 @@ void USpellMenuWidgetController::SpellGlobeSelected(const FGameplayTag& AbilityT
 
 	BroadcastSpellGlobeSelectedDelegate();
 
+}
+
+void USpellMenuWidgetController::SpendPointButtonPressed()
+{
+	GetAuraASC()->ServerSpendSpellPoint(SelectedAbility.Ability);
 }
 
 void USpellMenuWidgetController::BroadcastSpellGlobeSelectedDelegate()
