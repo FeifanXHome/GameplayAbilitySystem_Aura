@@ -84,7 +84,12 @@ void USpellMenuWidgetController::BroadcastSpellGlobeSelectedDelegate()
 	bool bEnableSpendPointsButton = false;
 	bool bEnableEquipButton = false;
 	ShouldEnableButtons(SelectedAbility.Status, CurrentSpellPoints, bEnableSpendPointsButton, bEnableEquipButton);
-	OnSpellGlobeSelectedDelegate.Broadcast(bEnableSpendPointsButton, bEnableEquipButton);
+
+	FString Description;
+	FString NextLevelDescription;
+	GetAuraASC()->GetDescriptionsByAbilityTag(SelectedAbility.Ability, Description, NextLevelDescription);
+
+	OnSpellGlobeSelectedDelegate.Broadcast(bEnableSpendPointsButton, bEnableEquipButton, Description, NextLevelDescription);
 }
 
 void USpellMenuWidgetController::ShouldEnableButtons(const FGameplayTag& AbilityStatus, int32 SpellPoints, 
