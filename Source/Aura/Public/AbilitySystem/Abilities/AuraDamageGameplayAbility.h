@@ -27,4 +27,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Damage")
 	TMap<FGameplayTag, FScalableFloat> DamagTypes;
 
+	float GetDamageByDamageType(float InLevel, const FGameplayTag& DamageType);
+
 };
