@@ -79,6 +79,12 @@ void USpellMenuWidgetController::SpendPointButtonPressed()
 	GetAuraASC()->ServerSpendSpellPoint(SelectedAbility.Ability);
 }
 
+void USpellMenuWidgetController::GlobeDeselect()
+{
+	SelectedAbility = { FAuraGameplayTags::Get().Abilities_None, FAuraGameplayTags::Get().Abilities_Status_Locked };
+	BroadcastSpellGlobeSelectedDelegate();
+}
+
 void USpellMenuWidgetController::BroadcastSpellGlobeSelectedDelegate()
 {
 	bool bEnableSpendPointsButton = false;
