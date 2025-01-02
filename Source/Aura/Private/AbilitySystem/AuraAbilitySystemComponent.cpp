@@ -246,8 +246,14 @@ bool UAuraAbilitySystemComponent::GetDescriptionsByAbilityTag(const FGameplayTag
 		}
 	}
 
+	OutNextLevelDescription = FString();
 	const UAbilityInfo* AbilityInfo = UAuraAbilitySystemLibrary::GetAbilityInfo(GetAvatarActor());
-	if (AbilityInfo == nullptr) return false;
+	if (AbilityInfo == nullptr)
+	{
+		OutDescription = FString(TEXT("AAuraGameModeBase.AbilityInfo is only stored on Server"));
+		return false;
+	}
+
 	const FAuraAbilityInfo& Info = AbilityInfo->FindAbilityInfoForTag(AbilityTag, true);
 	OutDescription = UAuraGameplayAbility::GetLockedDescription(Info.LevelRequirement);
 

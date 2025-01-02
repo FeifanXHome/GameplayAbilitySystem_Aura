@@ -20,7 +20,7 @@ void USpellMenuWidgetController::BindCallbacksToDependencies()
 			OnSpellPointsChangedDelegate.Broadcast(SpellPoints);
 
 			CurrentSpellPoints = SpellPoints;
-			BroadcastSpellGlobeSelectedDelegate();
+			BroadcastSpellGlobeSelectedDelegate(SelectedAbility.Ability, SelectedAbility.Status);
 		}
 	);
 
@@ -40,7 +40,7 @@ void USpellMenuWidgetController::BindCallbacksToDependencies()
 			if (SelectedAbility.Ability.MatchesTagExact(AbilityTag))
 			{
 				SelectedAbility.Status = StatusTag;
-				BroadcastSpellGlobeSelectedDelegate();
+				BroadcastSpellGlobeSelectedDelegate(SelectedAbility.Ability, SelectedAbility.Status);
 			}
 		}
 	);
@@ -48,6 +48,8 @@ void USpellMenuWidgetController::BindCallbacksToDependencies()
 
 void USpellMenuWidgetController::SpellGlobeSelected(const FGameplayTag& AbilityTag)
 {
+	BroadcastStopWaitingForEquipDelegate(SelectedAbility.Ability);
+
 	const FAuraGameplayTags GameplayTags = FAuraGameplayTags::Get();
 	const int32 SpellPoints = GetAuraPS()->GetSpellPoints();
 	const FGameplayAbilitySpec* AbilitySpec = GetAuraASC()->GetSpecFromAbilityTag(AbilityTag);
@@ -70,8 +72,7 @@ void USpellMenuWidgetController::SpellGlobeSelected(const FGameplayTag& AbilityT
 	SelectedAbility.Status = AbilityStatus;
 	CurrentSpellPoints = SpellPoints;
 
-	BroadcastSpellGlobeSelectedDelegate();
-
+	BroadcastSpellGlobeSelectedDelegate(SelectedAbility.Ability, SelectedAbility.Status);
 }
 
 void USpellMenuWidgetController::SpendPointButtonPressed()
@@ -81,19 +82,39 @@ void USpellMenuWidgetController::SpendPointButtonPressed()
 
 void USpellMenuWidgetController::GlobeDeselect()
 {
+	BroadcastStopWaitingForEquipDelegate(SelectedAbility.Ability);
+
 	SelectedAbility = { FAuraGameplayTags::Get().Abilities_None, FAuraGameplayTags::Get().Abilities_Status_Locked };
-	BroadcastSpellGlobeSelectedDelegate();
+	BroadcastSpellGlobeSelectedDelegate(SelectedAbility.Ability, SelectedAbility.Status);
 }
 
-void USpellMenuWidgetController::BroadcastSpellGlobeSelectedDelegate()
+void USpellMenuWidgetController::EquipButtonPressed()
+{
+	const FGameplayTag AbilityType = AbilityInfo->FindAbilityInfoForTag(SelectedAbility.Ability).AbilityType;
+	
+	WaitForEquipDelegate.Broadcast(AbilityType);
+	bWaitingForEquipSelection = true;
+}
+
+void USpellMenuWidgetController::BroadcastStopWaitingForEquipDelegate(const FGameplayTag& Ability)
+{
+	if (!bWaitingForEquipSelection) return;
+
+	const FGameplayTag AbilityType = AbilityInfo->FindAbilityInfoForTag(Ability).AbilityType;
+
+	StopWaitingForEquipDelegate.Broadcast(AbilityType);
+	bWaitingForEquipSelection = false;
+}
+
+void USpellMenuWidgetController::BroadcastSpellGlobeSelectedDelegate(const FGameplayTag& Ability, const FGameplayTag& Status)
 {
 	bool bEnableSpendPointsButton = false;
 	bool bEnableEquipButton = false;
-	ShouldEnableButtons(SelectedAbility.Status, CurrentSpellPoints, bEnableSpendPointsButton, bEnableEquipButton);
+	ShouldEnableButtons(Status, CurrentSpellPoints, bEnableSpendPointsButton, bEnableEquipButton);
 
 	FString Description;
 	FString NextLevelDescription;
-	GetAuraASC()->GetDescriptionsByAbilityTag(SelectedAbility.Ability, Description, NextLevelDescription);
+	GetAuraASC()->GetDescriptionsByAbilityTag(Ability, Description, NextLevelDescription);
 
 	OnSpellGlobeSelectedDelegate.Broadcast(bEnableSpendPointsButton, bEnableEquipButton, Description, NextLevelDescription);
 }
