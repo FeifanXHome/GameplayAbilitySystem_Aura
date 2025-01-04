@@ -134,6 +134,8 @@ void USpellMenuWidgetController::OnAbilityEquipped(const FGameplayTag& AbilityTa
 	AbilityInfoDelegate.Broadcast(Info);
 
 	BroadcastStopWaitingForEquipDelegate(AbilityTag);
+	SpellGlobeReassignDelegate.Broadcast(AbilityTag);
+	//GlobeDeselect(); called from SpellGlobeReassignDelegate_Event (WBP_SpellGlobe_Button)
 }
 
 void USpellMenuWidgetController::BroadcastStopWaitingForEquipDelegate(const FGameplayTag& Ability)
@@ -155,7 +157,11 @@ void USpellMenuWidgetController::BroadcastSpellGlobeSelectedDelegate(const FGame
 	FString Description;
 	FString NextLevelDescription;
 
-	Description = UAuraGameplayAbility::GetLockedDescription(AbilityInfo->FindAbilityInfoForTag(Ability).LevelRequirement).Append(TEXT(" [Client]"));
+	FAuraAbilityInfo Info = AbilityInfo->FindAbilityInfoForTag(Ability);
+	if (Info.AbilityTag.IsValid())
+	{
+		Description = UAuraGameplayAbility::GetLockedDescription(Info.LevelRequirement).Append(TEXT(" [Client]"));
+	}
 	GetAuraASC()->GetDescriptionsByAbilityTag(Ability, Description, NextLevelDescription);
 
 	OnSpellGlobeSelectedDelegate.Broadcast(bEnableSpendPointsButton, bEnableEquipButton, Description, NextLevelDescription);
