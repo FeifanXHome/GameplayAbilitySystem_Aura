@@ -77,6 +77,8 @@ protected:
 
 	void HealthChanged(const FOnAttributeChangeData& Data) const;
 	void OnXPChanged(int32 NewXP);
+	void OnAbilityEquipped(const FGameplayTag& AbilityTag, const FGameplayTag& Status, const FGameplayTag& Slot, const FGameplayTag& PreviousSlot);
+
 };
 
 template<typename T>
