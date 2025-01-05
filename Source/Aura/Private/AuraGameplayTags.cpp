@@ -164,21 +164,38 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	/**
 	 * Debuff
 	 */
-	GameplayTags.Debuff_FireBurn = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("Debuff.FireBurn"),
+	GameplayTags.Debuff_Type_FireBurn = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Debuff.Type.FireBurn"),
 		FString("Debuff for Fire damage")
 	);
-	GameplayTags.Debuff_LightningStun = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("Debuff.LightningStun"),
+	GameplayTags.Debuff_Type_LightningStun = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Debuff.Type.LightningStun"),
 		FString("Debuff for Lightning damage")
 	);
-	GameplayTags.Debuff_Arcane = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("Debuff.Arcane"),
+	GameplayTags.Debuff_Type_Arcane = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Debuff.Type.Arcane"),
 		FString("Debuff for Arcane damage")
 	);
-	GameplayTags.Debuff_Physical = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("Debuff.Physical"),
+	GameplayTags.Debuff_Type_Physical = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Debuff.Type.Physical"),
 		FString("Debuff for Physical damage")
+	);
+
+	GameplayTags.Debuff_Info_Chance = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Debuff.Info.Chance"),
+		FString("Debuff.Info.Chance")
+	);
+	GameplayTags.Debuff_Info_Damage = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Debuff.Info.Damage"),
+		FString("Debuff.Info.Damage")
+	);
+	GameplayTags.Debuff_Info_Duration = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Debuff.Info.Duration"),
+		FString("Debuff.Info.Duration")
+	);
+	GameplayTags.Debuff_Info_Frequency = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Debuff.Info.Frequency"),
+		FString("Debuff.Info.Frequency")
 	);
 
 	/**
@@ -192,10 +209,10 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	/**
 	 * Map of Damage Types to Debuffs
 	 */
-	GameplayTags.DamageTypesToDebuffs.Add(GameplayTags.Damage_Fire,		 GameplayTags.Debuff_FireBurn);
-	GameplayTags.DamageTypesToDebuffs.Add(GameplayTags.Damage_Lightning, GameplayTags.Debuff_LightningStun);
-	GameplayTags.DamageTypesToDebuffs.Add(GameplayTags.Damage_Arcane,	 GameplayTags.Damage_Arcane);
-	GameplayTags.DamageTypesToDebuffs.Add(GameplayTags.Damage_Physical,  GameplayTags.Debuff_Physical);
+	GameplayTags.DamageTypesToDebuffs.Add(GameplayTags.Damage_Fire,		 GameplayTags.Debuff_Type_FireBurn);
+	GameplayTags.DamageTypesToDebuffs.Add(GameplayTags.Damage_Lightning, GameplayTags.Debuff_Type_LightningStun);
+	GameplayTags.DamageTypesToDebuffs.Add(GameplayTags.Damage_Arcane,	 GameplayTags.Debuff_Type_Arcane);
+	GameplayTags.DamageTypesToDebuffs.Add(GameplayTags.Damage_Physical,  GameplayTags.Debuff_Type_Physical);
 
 	/**
 	 * Effects

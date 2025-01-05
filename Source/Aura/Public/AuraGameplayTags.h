@@ -61,10 +61,15 @@ public:
 	FGameplayTag Attributes_Resistance_Physical;
 
 	// Debuff
-	FGameplayTag Debuff_FireBurn;
-	FGameplayTag Debuff_LightningStun;
-	FGameplayTag Debuff_Arcane;
-	FGameplayTag Debuff_Physical;
+	FGameplayTag Debuff_Type_FireBurn;
+	FGameplayTag Debuff_Type_LightningStun;
+	FGameplayTag Debuff_Type_Arcane;
+	FGameplayTag Debuff_Type_Physical;
+
+	FGameplayTag Debuff_Info_Chance;
+	FGameplayTag Debuff_Info_Damage;
+	FGameplayTag Debuff_Info_Duration;
+	FGameplayTag Debuff_Info_Frequency;
 
 	// Abilities
 	FGameplayTag Abilities_None;
