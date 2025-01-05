@@ -22,6 +22,8 @@ public:
 	TObjectPtr<UObject> WidgetController;
 
 protected:
+	virtual void NativeDestruct();
+
 	UFUNCTION(BlueprintImplementableEvent)
 	void WidgetControllerSet();
 };

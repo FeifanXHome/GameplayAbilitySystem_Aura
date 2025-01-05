@@ -7,6 +7,14 @@
 #include "Player/AuraPlayerState.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 
+void UAttributeMenuWidgetController::OnWidgetDestruct(UObject* AuraUserWidget)
+{
+	Super::OnWidgetDestruct(AuraUserWidget);
+
+	AttributeInfoDelegate.RemoveAll(AuraUserWidget);
+	AttributePointsChangedDelegate.RemoveAll(AuraUserWidget);
+}
+
 void UAttributeMenuWidgetController::BroadcastInitialValues()
 {
 	const UAuraAttributeSet* AS = GetAuraAS();

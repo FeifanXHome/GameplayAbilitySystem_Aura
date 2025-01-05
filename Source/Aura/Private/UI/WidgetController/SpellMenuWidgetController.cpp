@@ -7,6 +7,17 @@
 #include "Player/AuraPlayerState.h"
 #include "AbilitySystem/Abilities/AuraGameplayAbility.h"
 
+void USpellMenuWidgetController::OnWidgetDestruct(UObject* AuraUserWidget)
+{
+	Super::OnWidgetDestruct(AuraUserWidget);
+
+	OnSpellPointsChangedDelegate.RemoveAll(AuraUserWidget);
+	OnSpellGlobeSelectedDelegate.RemoveAll(AuraUserWidget);
+	WaitForEquipDelegate.RemoveAll(AuraUserWidget);
+	StopWaitingForEquipDelegate.RemoveAll(AuraUserWidget);
+	SpellGlobeReassignDelegate.RemoveAll(AuraUserWidget);
+}
+
 void USpellMenuWidgetController::BroadcastInitialValues()
 {
 	BroadcastAbilityInfo();

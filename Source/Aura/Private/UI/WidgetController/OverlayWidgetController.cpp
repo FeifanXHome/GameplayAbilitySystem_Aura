@@ -9,6 +9,19 @@
 #include "AuraGameplayTags.h"
 #include "AbilitySystem/Data/AbilityInfo.h"
 
+void UOverlayWidgetController::OnWidgetDestruct(UObject* AuraUserWidget)
+{
+	Super::OnWidgetDestruct(AuraUserWidget);
+
+	OnHealthChanged.RemoveAll(AuraUserWidget);
+	OnMaxHealthChanged.RemoveAll(AuraUserWidget);
+	OnManaChanged.RemoveAll(AuraUserWidget);
+	OnMaxManaChanged.RemoveAll(AuraUserWidget);
+	MessageWidgetRowDelegate.RemoveAll(AuraUserWidget);
+	OnXPPercentChangedDelegate.RemoveAll(AuraUserWidget);
+	OnPlayerLevelChangedDelegate.RemoveAll(AuraUserWidget);
+}
+
 void UOverlayWidgetController::BroadcastInitialValues()
 {
 	OnHealthChanged.Broadcast(GetAuraAS()->GetHealth());

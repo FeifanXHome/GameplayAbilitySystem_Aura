@@ -43,6 +43,8 @@ class AURA_API UOverlayWidgetController : public UAuraWidgetController
 	GENERATED_BODY()
 
 public:
+	virtual void OnWidgetDestruct(UObject* AuraUserWidget);
+
 	virtual void BroadcastInitialValues() override;
 	virtual void BindCallbacksToDependencies() override;
 

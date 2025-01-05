@@ -8,6 +8,11 @@
 #include "AbilitySystem/AuraAttributeSet.h"
 #include "AbilitySystem/Data/AbilityInfo.h"
 
+void UAuraWidgetController::OnWidgetDestruct(UObject* AuraUserWidget)
+{
+	AbilityInfoDelegate.RemoveAll(AuraUserWidget);
+}
+
 void UAuraWidgetController::SetWidgetControllerParams(const FWidgetControllerParams& WCParams)
 {
 	PlayerController = WCParams.PlayerController;
