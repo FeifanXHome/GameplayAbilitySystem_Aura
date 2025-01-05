@@ -34,11 +34,6 @@ public:
 	FGameplayTag Attributes_Secondary_MaxHealth;
 	FGameplayTag Attributes_Secondary_MaxMana;
 
-	FGameplayTag Attributes_Resistance_Fire;
-	FGameplayTag Attributes_Resistance_Lightning;
-	FGameplayTag Attributes_Resistance_Arcane;
-	FGameplayTag Attributes_Resistance_Physical;
-
 	// Meta Attributes
 	FGameplayTag Attributes_Meta_IncomingXP;
 
@@ -58,6 +53,18 @@ public:
 	FGameplayTag Damage_Lightning;
 	FGameplayTag Damage_Arcane;
 	FGameplayTag Damage_Physical;
+
+	// Resistance
+	FGameplayTag Attributes_Resistance_Fire;
+	FGameplayTag Attributes_Resistance_Lightning;
+	FGameplayTag Attributes_Resistance_Arcane;
+	FGameplayTag Attributes_Resistance_Physical;
+
+	// Debuff
+	FGameplayTag Debuff_FireBurn;
+	FGameplayTag Debuff_LightningStun;
+	FGameplayTag Debuff_Arcane;
+	FGameplayTag Debuff_Physical;
 
 	// Abilities
 	FGameplayTag Abilities_None;
@@ -93,7 +100,8 @@ public:
 	FGameplayTag Montage_Attack_3;
 	FGameplayTag Montage_Attack_4;
 
-	TMap<FGameplayTag, FGameplayTag> DamageTypesToResistance;
+	TMap<FGameplayTag, FGameplayTag> DamageTypesToResistances;
+	TMap<FGameplayTag, FGameplayTag> DamageTypesToDebuffs;
 
 	// Effects
 	FGameplayTag Effects_HitReact; // [GE_HitReact]: Gameplay Effect -> GrantedTags
