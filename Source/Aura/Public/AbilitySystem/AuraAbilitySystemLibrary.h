@@ -11,6 +11,7 @@ class UAttributeMenuWidgetController;
 class UAbilitySystemComponent;
 class UCharacterClassInfo;
 class UAbilityInfo;
+struct FDamageEffectParams;
 
 /**
  * 
@@ -86,5 +87,7 @@ public:
 	UFUNCTION(BlueprintPure, Category = "AuraAbilitySystemLibrary|GameplayMechanics")
 	static bool IsNotFriend(AActor* FirstActor, AActor* SecondActor);
 
+	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|DamageEffect")
+	static FGameplayEffectContextHandle ApplyDamageEffect(const FDamageEffectParams& DamageEffectParams);
 
 };
