@@ -55,10 +55,8 @@ void AAuraProjectile::BeginPlay()
 	LoopingSoundComponent = UGameplayStatics::SpawnSoundAttached(LoopingSound, GetRootComponent());
 
 	// adjust the location on clients
-	if (!DamageEffectSpecHandle.IsValid())
+	if (!HasAuthority())
 	{
-		check(!HasAuthority());
-
 		const AAuraPlayerState* AuraPlayerState = GetOwner<AAuraPlayerState>();
 		if (AuraPlayerState)
 		{
@@ -78,10 +76,7 @@ void AAuraProjectile::Destroyed()
 {
 	if (!bHit && !HasAuthority())
 	{
-		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
-		
-		bHit = true;
+		OnHit();
 	}
 	
 	if (IsValid(LoopingSoundComponent))
@@ -98,73 +93,62 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 {
 	// DamageEffectSpecHandle is only being set on server in UAuraProjectileSpell::SpawnProjectile
 	// DamageEffectSpecHandle should be null on clients
-	if (DamageEffectSpecHandle.IsValid())
+	if (HasAuthority())
 	{
-		AActor* EffectCauser = DamageEffectSpecHandle.Data->GetContext().GetEffectCauser();
-		if (EffectCauser == OtherActor)
-		{
-			return;
-		}
-		if (! UAuraAbilitySystemLibrary::IsNotFriend(EffectCauser, OtherActor))
-		{
-			return;
-		}
+		check(DamageEffectParams.SourceAbilitySystemComponent != nullptr);
+
+		AActor* SourceAvatarActor = DamageEffectParams.SourceAbilitySystemComponent->GetAvatarActor();
+		if (SourceAvatarActor == OtherActor) return;
+		if (! UAuraAbilitySystemLibrary::IsNotFriend(SourceAvatarActor, OtherActor)) return;
 	}
-	
-	if (!DamageEffectSpecHandle.IsValid())
+	else
 	{
-		check(!HasAuthority());
+		check(DamageEffectParams.SourceAbilitySystemComponent == nullptr);
 
 		// Case: Enemy
 		AActor* owner = GetOwner();
-		if (owner == OtherActor)
-		{
-			return;
-		}
-		if (! UAuraAbilitySystemLibrary::IsNotFriend(owner, OtherActor))
-		{
-			return;
-		}
+		if (owner == OtherActor) return;
+		if (! UAuraAbilitySystemLibrary::IsNotFriend(owner, OtherActor)) return;
 
 		// Case: Aura
 		const AAuraPlayerState* AuraPlayerState = GetOwner<AAuraPlayerState>();
 		if (AuraPlayerState)
 		{
 			AActor* AvatarActor = (AuraPlayerState->GetAbilitySystemComponent()->GetAvatarActor());
-			if (AvatarActor == OtherActor)
-			{
-				return;
-			}
-			if (! UAuraAbilitySystemLibrary::IsNotFriend(AvatarActor, OtherActor))
-			{
-				return;
-			}
+			if (AvatarActor == OtherActor) return;
+			if (! UAuraAbilitySystemLibrary::IsNotFriend(AvatarActor, OtherActor)) return;
 		}
 	}
 
 	if (!bHit)
 	{
-		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
-
-		if (IsValid(LoopingSoundComponent))
-		{
-			LoopingSoundComponent->Stop();
-		}
-		// else{UKismetSystemLibrary::PrintString(this, FString(TEXT("OnSphereOverlap*******")), true, true, FLinearColor::Red, 3.f);}
-		
-		bHit = true;
+		OnHit();
 	}
 
 	if (HasAuthority())
 	{
 		if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
 		{
-			TargetASC->ApplyGameplayEffectSpecToSelf(*DamageEffectSpecHandle.Data);
+			DamageEffectParams.TargetAbilitySystemComponent = TargetASC;
+			FGameplayEffectContextHandle EffectContextHandle = UAuraAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams);
+			check(EffectContextHandle.IsValid());
 		}
 
 		Destroy();
 	}
 }
 
+void AAuraProjectile::OnHit()
+{
+	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
+
+	if (IsValid(LoopingSoundComponent))
+	{
+		LoopingSoundComponent->Stop();
+	}
+	// else{UKismetSystemLibrary::PrintString(this, FString(TEXT("OnSphereOverlap*******")), true, true, FLinearColor::Red, 3.f);}
+
+	bHit = true;
+}
 
