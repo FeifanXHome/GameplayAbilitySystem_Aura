@@ -258,6 +258,10 @@ public:
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, IncomingXP);
 
 private:
+	void HandleIncomingDamage(const FEffectProperties& Props);
+	void HandleIncomingXP(const FEffectProperties& Props);
+	void HandleDebuff(const FEffectProperties& Props);
+
 	void ClampAttributes(const FGameplayAttribute& Attribute, float& NewValue) const;
 	void SetEffectProperties(const struct FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const;
 	void ShowFloatingText(const FEffectProperties& Props, float Damage, bool bBlockedHit, bool bCriticalHit) const;

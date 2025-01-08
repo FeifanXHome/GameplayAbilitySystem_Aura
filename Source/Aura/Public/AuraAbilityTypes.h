@@ -70,9 +70,9 @@ public:
 	void SetIsCriticalHit(bool bInIsCriticalHit) { bIsCriticalHit = bInIsCriticalHit; }
 	void SetIsBlockedHit(bool bInIsBlockedHit)   { bIsBlockedHit = bInIsBlockedHit;   }
 	void SetIsSuccessfulDebuff(bool IsInDebuff)  { bIsSuccessfulDebuff = IsInDebuff;   }
-	void SetDebuffDamage(bool InDamage)			 { DebuffDamage = InDamage; }
-	void SetDebuffDuration(bool InDuration)		 { DebuffDuration = InDuration; }
-	void SetDebuffFrequency(bool InFrequency)	 { DebuffFrequency = InFrequency; }
+	void SetDebuffDamage(float InDamage)		 { DebuffDamage = InDamage; }
+	void SetDebuffDuration(float InDuration)	 { DebuffDuration = InDuration; }
+	void SetDebuffFrequency(float InFrequency)	 { DebuffFrequency = InFrequency; }
 	void SetDamageType(FGameplayTag InDamageType){ DamageType = InDamageType; }
 
 	/** Returns the actual struct used for serialization, subclasses must override this! */

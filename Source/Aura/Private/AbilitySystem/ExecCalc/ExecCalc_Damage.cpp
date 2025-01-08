@@ -126,9 +126,16 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 			TargetDebuffResistance = FMath::Clamp(TargetDebuffResistance, 0.f, 100.f);
 			const float EffectiveDebuffChance = SourceDebuffChance * (100 - TargetDebuffResistance) / 100.f;
 			const bool bDebuff = FMath::RandRange(1, 100) < EffectiveDebuffChance;
+
+			UAuraAbilitySystemLibrary::SetIsSuccessfulDebuff(EffectContextHandle, bDebuff);
 			if (bDebuff)
 			{
 				// TODO: What do we do?
+				// All of those stuff below have already been set in UAuraAbilitySystemLibrary::ApplyDamageEffect
+				//UAuraAbilitySystemLibrary::SetDebuffDamage(EffectContextHandle, Spec.GetSetByCallerMagnitude(GameplayTags.Debuff_Info_Damage, false, -1.0f));
+				//UAuraAbilitySystemLibrary::SetDebuffDuration(EffectContextHandle, Spec.GetSetByCallerMagnitude(GameplayTags.Debuff_Info_Duration, false, -1.0f));
+				//UAuraAbilitySystemLibrary::SetDebuffFrequency(EffectContextHandle, Spec.GetSetByCallerMagnitude(GameplayTags.Debuff_Info_Frequency, false, -1.0f));
+				//UAuraAbilitySystemLibrary::SetDamageType(EffectContextHandle, DamageType);
 			}
 		}
 	}
