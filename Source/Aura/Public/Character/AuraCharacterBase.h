@@ -37,8 +37,8 @@ public:
 	virtual int32 GetMinionCount_Implementation() override;
 	virtual void IncrementMinionCount_Implementation(int32 Amount) override;
 	virtual ECharacterClass GetCharacterClass_Implementation() override;
-	virtual FOnASCRegisteredSignature GetOnASCRegisteredDelegate() override;
-	virtual FOnDeathSignature GetOnDeathDelegate() override;
+	virtual FOnASCRegisteredSignature& GetOnASCRegisteredDelegate() override;
+	virtual FOnDeathSignature& GetOnDeathDelegate() override;
 	/** end Combat Interface */
 
 	FOnASCRegisteredSignature OnASCRegisteredDelegate;

@@ -15,9 +15,10 @@ void UDebuffNiagaraComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	ICombatInterface* CombatInterface = Cast<ICombatInterface>(GetOwner());
-	UAbilitySystemComponent* ASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetOwner());
-	check(ASC);
+	AActor* Owner = GetOwner();
+	ICombatInterface* CombatInterface = Cast<ICombatInterface>(Owner);
+	UAbilitySystemComponent* ASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Owner);
+	//check(ASC);
 	if (ASC)
 	{
 		ASC->RegisterGameplayTagEvent(DebuffTag, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &UDebuffNiagaraComponent::DebuffTagChanged);
@@ -54,6 +55,7 @@ void UDebuffNiagaraComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 void UDebuffNiagaraComponent::DebuffTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
 {
+	AActor* Owner = GetOwner();
 	if (NewCount > 0)
 	{
 		Activate();

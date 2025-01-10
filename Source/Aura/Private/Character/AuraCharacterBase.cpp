@@ -165,12 +165,12 @@ ECharacterClass AAuraCharacterBase::GetCharacterClass_Implementation()
 	return CharacterClass;
 }
 
-FOnASCRegisteredSignature AAuraCharacterBase::GetOnASCRegisteredDelegate()
+FOnASCRegisteredSignature& AAuraCharacterBase::GetOnASCRegisteredDelegate()
 {
 	return OnASCRegisteredDelegate;
 }
 
-FOnDeathSignature AAuraCharacterBase::GetOnDeathDelegate()
+FOnDeathSignature& AAuraCharacterBase::GetOnDeathDelegate()
 {
 	return OnDeathDelegate;
 }

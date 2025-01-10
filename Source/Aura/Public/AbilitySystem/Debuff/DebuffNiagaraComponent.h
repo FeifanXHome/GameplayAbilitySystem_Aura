@@ -27,5 +27,7 @@ protected:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	void DebuffTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
+
+	UFUNCTION()
 	void OnOwnerDeath(AActor* DeadActor);
 };
