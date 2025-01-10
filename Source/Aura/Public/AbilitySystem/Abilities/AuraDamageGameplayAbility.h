@@ -50,6 +50,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Damage")
 	float DebuffDuration = 5.f;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Damage")
+	float DeathImpulseMagnitude = 60.f;
+
 
 	//float GetDamageByDamageType(float InLevel, const FGameplayTag& DamageType);
 
