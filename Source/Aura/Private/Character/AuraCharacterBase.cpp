@@ -8,12 +8,17 @@
 #include "Aura/Aura.h"
 #include "AuraGameplayTags.h"
 #include "Kismet/GameplayStatics.h"
+#include "AbilitySystem/Debuff/DebuffNiagaraComponent.h"
 
 // Sets default values
 AAuraCharacterBase::AAuraCharacterBase()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
+
+	BurnDebuffComponent = CreateDefaultSubobject<UDebuffNiagaraComponent>(TEXT("BurnDebuffComponentt"));
+	BurnDebuffComponent->SetupAttachment(GetRootComponent());
+	BurnDebuffComponent->DebuffTag = FAuraGameplayTags::Get().Debuff_Type_FireBurn;
 
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 	GetCapsuleComponent()->SetGenerateOverlapEvents(false);
@@ -72,8 +77,10 @@ void AAuraCharacterBase::MulticastHandleDeath_Implementation()
 	Dissolve();
 
 	// We don't have to make this a replicated variable.
-	// MulticastHandleDeath will be caleed on clients and server.
+	// MulticastHandleDeath will be called on clients and server.
 	bDead = true;
+
+	OnDeathDelegate.Broadcast(this);
 }
 
 // Called when the game starts or when spawned
@@ -156,6 +163,16 @@ void AAuraCharacterBase::IncrementMinionCount_Implementation(int32 Amount)
 ECharacterClass AAuraCharacterBase::GetCharacterClass_Implementation()
 {
 	return CharacterClass;
+}
+
+FOnASCRegisteredSignature AAuraCharacterBase::GetOnASCRegisteredDelegate()
+{
+	return OnASCRegisteredDelegate;
+}
+
+FOnDeathSignature AAuraCharacterBase::GetOnDeathDelegate()
+{
+	return OnDeathDelegate;
 }
 
 void AAuraCharacterBase::InitAbilityActorInfo()
