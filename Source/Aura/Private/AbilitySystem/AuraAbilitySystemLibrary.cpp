@@ -258,11 +258,20 @@ FGameplayTag UAuraAbilitySystemLibrary::GetDamageType(const FGameplayEffectConte
 	return FGameplayTag();
 }
 
+FVector UAuraAbilitySystemLibrary::GetDeathImpulse(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const FAuraGameplayEffectContext* AuraEffectContext = dynamic_cast<const FAuraGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		return AuraEffectContext->GetDeathImpulse();
+	}
+	return FVector::ZeroVector;
+}
+
 void UAuraAbilitySystemLibrary::SetIsBlockedHit(UPARAM(ref)FGameplayEffectContextHandle& EffectContextHandle, bool bInIsBlockedHit)
 {
 	if (FAuraGameplayEffectContext* AuraEffectContext = dynamic_cast<FAuraGameplayEffectContext*>(EffectContextHandle.Get()))
 	{
-		return AuraEffectContext->SetIsBlockedHit(bInIsBlockedHit);
+		AuraEffectContext->SetIsBlockedHit(bInIsBlockedHit);
 	}
 }
 
@@ -270,7 +279,7 @@ void UAuraAbilitySystemLibrary::SetIsCriticalHit(UPARAM(ref)FGameplayEffectConte
 {
 	if (FAuraGameplayEffectContext* AuraEffectContext = dynamic_cast<FAuraGameplayEffectContext*>(EffectContextHandle.Get()))
 	{
-		return AuraEffectContext->SetIsCriticalHit(bInIsCriticalHit);
+		AuraEffectContext->SetIsCriticalHit(bInIsCriticalHit);
 	}
 }
 
@@ -278,7 +287,7 @@ void UAuraAbilitySystemLibrary::SetIsSuccessfulDebuff(UPARAM(ref)FGameplayEffect
 {
 	if (FAuraGameplayEffectContext* AuraEffectContext = dynamic_cast<FAuraGameplayEffectContext*>(EffectContextHandle.Get()))
 	{
-		return AuraEffectContext->SetIsSuccessfulDebuff(IsInDebuff);
+		AuraEffectContext->SetIsSuccessfulDebuff(IsInDebuff);
 	}
 }
 
@@ -286,7 +295,7 @@ void UAuraAbilitySystemLibrary::SetDebuffDamage(UPARAM(ref)FGameplayEffectContex
 {
 	if (FAuraGameplayEffectContext* AuraEffectContext = dynamic_cast<FAuraGameplayEffectContext*>(EffectContextHandle.Get()))
 	{
-		return AuraEffectContext->SetDebuffDamage(InDamage);
+		AuraEffectContext->SetDebuffDamage(InDamage);
 	}
 }
 
@@ -294,7 +303,7 @@ void UAuraAbilitySystemLibrary::SetDebuffDuration(UPARAM(ref)FGameplayEffectCont
 {
 	if (FAuraGameplayEffectContext* AuraEffectContext = dynamic_cast<FAuraGameplayEffectContext*>(EffectContextHandle.Get()))
 	{
-		return AuraEffectContext->SetDebuffDuration(InDuration);
+		AuraEffectContext->SetDebuffDuration(InDuration);
 	}
 }
 
@@ -302,7 +311,7 @@ void UAuraAbilitySystemLibrary::SetDebuffFrequency(UPARAM(ref)FGameplayEffectCon
 {
 	if (FAuraGameplayEffectContext* AuraEffectContext = dynamic_cast<FAuraGameplayEffectContext*>(EffectContextHandle.Get()))
 	{
-		return AuraEffectContext->SetDebuffFrequency(InFrequency);
+		AuraEffectContext->SetDebuffFrequency(InFrequency);
 	}
 }
 
@@ -310,7 +319,15 @@ void UAuraAbilitySystemLibrary::SetDamageType(UPARAM(ref) FGameplayEffectContext
 {
 	if (FAuraGameplayEffectContext* AuraEffectContext = dynamic_cast<FAuraGameplayEffectContext*>(EffectContextHandle.Get()))
 	{
-		return AuraEffectContext->SetDamageType(InDamageType);
+		AuraEffectContext->SetDamageType(InDamageType);
+	}
+}
+
+void UAuraAbilitySystemLibrary::SetDeathImpulse(UPARAM(ref)FGameplayEffectContextHandle& EffectContextHandle, FVector InDeathImpulse)
+{
+	if (FAuraGameplayEffectContext* AuraEffectContext = dynamic_cast<FAuraGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		AuraEffectContext->SetDeathImpulse(InDeathImpulse);
 	}
 }
 
@@ -408,10 +425,11 @@ FGameplayEffectContextHandle UAuraAbilitySystemLibrary::ApplyDamageEffect(const 
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, GameplayTags.Debuff_Info_Frequency, DamageEffectParams.DebuffFrequency);
 
 	UAuraAbilitySystemLibrary::SetIsSuccessfulDebuff(EffectContextHandle, false);
-	UAuraAbilitySystemLibrary::SetDebuffDamage(EffectContextHandle,		DamageEffectParams.DebuffDamage);
-	UAuraAbilitySystemLibrary::SetDebuffDuration(EffectContextHandle,	DamageEffectParams.DebuffDuration);
-	UAuraAbilitySystemLibrary::SetDebuffFrequency(EffectContextHandle,	DamageEffectParams.DebuffFrequency);
-	UAuraAbilitySystemLibrary::SetDamageType(EffectContextHandle,		DamageEffectParams.DamageType);
+	UAuraAbilitySystemLibrary::SetDebuffDamage		(EffectContextHandle, DamageEffectParams.DebuffDamage);
+	UAuraAbilitySystemLibrary::SetDebuffDuration	(EffectContextHandle, DamageEffectParams.DebuffDuration);
+	UAuraAbilitySystemLibrary::SetDebuffFrequency	(EffectContextHandle, DamageEffectParams.DebuffFrequency);
+	UAuraAbilitySystemLibrary::SetDamageType		(EffectContextHandle, DamageEffectParams.DamageType);
+	UAuraAbilitySystemLibrary::SetDeathImpulse		(EffectContextHandle, DamageEffectParams.DeathImpulse);
 
 	DamageEffectParams.TargetAbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data);
 
