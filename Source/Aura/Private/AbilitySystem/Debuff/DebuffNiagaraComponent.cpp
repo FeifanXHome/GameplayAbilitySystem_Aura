@@ -56,7 +56,10 @@ void UDebuffNiagaraComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 void UDebuffNiagaraComponent::DebuffTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
 {
 	AActor* Owner = GetOwner();
-	if (NewCount > 0)
+	bool bOwnerValid = IsValid(Owner);
+	bool bOwnerAlive = bOwnerValid && Owner->Implements<UCombatInterface>() && !ICombatInterface::Execute_IsDead(Owner);
+
+	if (bOwnerValid && bOwnerAlive && NewCount > 0)
 	{
 		Activate();
 	}

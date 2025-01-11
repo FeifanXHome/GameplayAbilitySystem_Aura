@@ -42,7 +42,7 @@ protected:
 	float DebuffChance = 20.f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Damage")
-	float DebuffDamage = 5.f;
+	float DebuffDamage = 1.f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Damage")
 	float DebuffFrequency = 1.f;
@@ -51,7 +51,7 @@ protected:
 	float DebuffDuration = 5.f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Damage")
-	float DeathImpulseMagnitude = 60.f;
+	float DeathImpulseMagnitude = 8000.f;
 
 
 	//float GetDamageByDamageType(float InLevel, const FGameplayTag& DamageType);

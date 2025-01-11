@@ -33,7 +33,7 @@ public:
 
 	/** Combat Interface */
 	virtual int32 GetPlayerLevel_Implementation() override;
-	virtual void Die() override; // called specifically on the server
+	virtual void Die(const FVector& DeathImpulse) override; // called specifically on the server
 	/** end Combat Interface */
 
 	UPROPERTY(BlueprintAssignable)

@@ -47,7 +47,7 @@ UAnimMontage* AAuraCharacterBase::GetHitReactMontage_Implementation()
 }
 
 // called specifically on the server
-void AAuraCharacterBase::Die()
+void AAuraCharacterBase::Die(const FVector& DeathImpulse)
 {
 	// The detachment is something that will automatically be a replicated action
 	// So if we detach on the server, we don't have to detach on clients.
@@ -55,22 +55,24 @@ void AAuraCharacterBase::Die()
 
 	// There are a number of things I want to do that we can't just do on the server
 	// We have to do on the server and clients
-	MulticastHandleDeath();
+	MulticastHandleDeath(DeathImpulse);
 }
 
 // called on all machines, client and server
-void AAuraCharacterBase::MulticastHandleDeath_Implementation()
+void AAuraCharacterBase::MulticastHandleDeath_Implementation(const FVector& DeathImpulse)
 {
 	UGameplayStatics::PlaySoundAtLocation(this, DeathSound, GetActorLocation(), GetActorRotation());
 
 	Weapon->SetSimulatePhysics(true);
 	Weapon->SetEnableGravity(true);
 	Weapon->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+	Weapon->AddImpulse(DeathImpulse * 0.1, NAME_None, true);
 
 	GetMesh()->SetSimulatePhysics(true);
 	GetMesh()->SetEnableGravity(true);
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
 	GetMesh()->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
+	GetMesh()->AddImpulse(DeathImpulse, NAME_None, true);
 
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	

@@ -27,7 +27,7 @@ public:
 
 	/** Combat Interface */
 	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
-	virtual void Die() override; // called specifically on the server
+	virtual void Die(const FVector& DeathImpulse) override; // called specifically on the server
 	virtual FVector GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag) override;
 	virtual bool IsDead_Implementation() const override;
 	virtual AActor* GetAvatar_Implementation() override;
@@ -45,7 +45,7 @@ public:
 	FOnDeathSignature OnDeathDelegate;
 
 	UFUNCTION(NetMulticast, Reliable)
-	virtual void MulticastHandleDeath(); // called on all machines, client and server
+	virtual void MulticastHandleDeath(const FVector& DeathImpulse); // called on all machines, client and server
 
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	TArray<FTaggedMontage> AttackMontages;
