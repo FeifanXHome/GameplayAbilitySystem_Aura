@@ -17,6 +17,7 @@ bool FAuraGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bo
 
 	Ar << DamageType;
 	Ar << DeathImpulse;
+	Ar << KnockbackForce;
 
 	return true;
 }

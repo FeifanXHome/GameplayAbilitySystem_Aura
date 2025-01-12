@@ -267,6 +267,15 @@ FVector UAuraAbilitySystemLibrary::GetDeathImpulse(const FGameplayEffectContextH
 	return FVector::ZeroVector;
 }
 
+FVector UAuraAbilitySystemLibrary::GetKnockbackForce(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const FAuraGameplayEffectContext* AuraEffectContext = dynamic_cast<const FAuraGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		return AuraEffectContext->GetKnockbackForce();
+	}
+	return FVector::ZeroVector;
+}
+
 void UAuraAbilitySystemLibrary::SetIsBlockedHit(UPARAM(ref)FGameplayEffectContextHandle& EffectContextHandle, bool bInIsBlockedHit)
 {
 	if (FAuraGameplayEffectContext* AuraEffectContext = dynamic_cast<FAuraGameplayEffectContext*>(EffectContextHandle.Get()))
@@ -328,6 +337,14 @@ void UAuraAbilitySystemLibrary::SetDeathImpulse(UPARAM(ref)FGameplayEffectContex
 	if (FAuraGameplayEffectContext* AuraEffectContext = dynamic_cast<FAuraGameplayEffectContext*>(EffectContextHandle.Get()))
 	{
 		AuraEffectContext->SetDeathImpulse(InDeathImpulse);
+	}
+}
+
+void UAuraAbilitySystemLibrary::SetKnockbackForce(UPARAM(ref)FGameplayEffectContextHandle& EffectContextHandle, FVector InForce)
+{
+	if (FAuraGameplayEffectContext* AuraEffectContext = dynamic_cast<FAuraGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		AuraEffectContext->SetKnockbackForce(InForce);
 	}
 }
 
@@ -402,7 +419,7 @@ FGameplayEffectContextHandle UAuraAbilitySystemLibrary::ApplyDamageEffect(const 
 
 	if (DamageEffectParams.TargetAbilitySystemComponent == nullptr) return EffectContextHandle;
 	if (DamageEffectParams.SourceAbilitySystemComponent == nullptr) return EffectContextHandle;
-	if (DamageEffectParams.DamageGameplayEffectClass == nullptr) return EffectContextHandle;
+	if (DamageEffectParams.DamageGameplayEffectClass    == nullptr) return EffectContextHandle;
 
 	const FAuraGameplayTags& GameplayTags = FAuraGameplayTags::Get();
 	const AActor* SourceAvatarActor = DamageEffectParams.SourceAbilitySystemComponent->GetAvatarActor();
@@ -430,6 +447,7 @@ FGameplayEffectContextHandle UAuraAbilitySystemLibrary::ApplyDamageEffect(const 
 	UAuraAbilitySystemLibrary::SetDebuffFrequency	(EffectContextHandle, DamageEffectParams.DebuffFrequency);
 	UAuraAbilitySystemLibrary::SetDamageType		(EffectContextHandle, DamageEffectParams.DamageType);
 	UAuraAbilitySystemLibrary::SetDeathImpulse		(EffectContextHandle, DamageEffectParams.DeathImpulse);
+	UAuraAbilitySystemLibrary::SetKnockbackForce	(EffectContextHandle, DamageEffectParams.KnockbackForce);
 
 	DamageEffectParams.TargetAbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data);
 
