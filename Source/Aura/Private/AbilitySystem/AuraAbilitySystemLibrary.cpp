@@ -413,6 +413,43 @@ bool UAuraAbilitySystemLibrary::IsNotFriend(AActor* FirstActor, AActor* SecondAc
 	return !bFriends;
 }
 
+TArray<FRotator> UAuraAbilitySystemLibrary::EvenlySpacedRotators(float Spread, int32 Count, const FVector Forward, const FVector Axis)
+{
+	TArray<FRotator> Rotators;
+
+	TArray<FVector> Vectors = EvenlyRotatedVectors(Spread, Count, Forward, Axis);
+	for (const FVector& Vector : Vectors)
+	{
+		Rotators.Add(Vector.Rotation());
+	}
+
+	return Rotators;
+}
+
+TArray<FVector> UAuraAbilitySystemLibrary::EvenlyRotatedVectors(float Spread, int32 Count, const FVector Forward, const FVector Axis)
+{
+	TArray<FVector> Vectors;
+
+	if (Count <= 1)
+	{
+		Vectors.Add(Forward.GetSafeNormal());
+	}
+	else
+	{
+		const float DeltaSpread = Spread / (Count - 1);
+		const FVector LeftOfSpread = Forward.RotateAngleAxis(-Spread / 2.f, Axis);
+
+		for (int32 i = 0; i < Count; i++)
+		{
+			const float Angle = DeltaSpread * (i);
+			const FVector Direction = LeftOfSpread.RotateAngleAxis(Angle, Axis);
+			Vectors.Add(Direction);
+		}
+	}
+
+	return Vectors;
+}
+
 FGameplayEffectContextHandle UAuraAbilitySystemLibrary::ApplyDamageEffect(const FDamageEffectParams& DamageEffectParams)
 {
 	FGameplayEffectContextHandle EffectContextHandle;

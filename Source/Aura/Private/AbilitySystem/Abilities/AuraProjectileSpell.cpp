@@ -35,6 +35,11 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 	FRotator Rotation = (ProjectileTargetLocation - SocketLocation).Rotation();
 	Rotation.Pitch = bOverridePitch ? PitchOverride : 0.f;
 
+	DoSpawnProjectile(SocketLocation, Rotation);
+}
+
+void UAuraProjectileSpell::DoSpawnProjectile(const FVector& SocketLocation, FRotator& Rotation)
+{
 	FTransform SpawnTransform;
 	SpawnTransform.SetLocation(SocketLocation);
 	SpawnTransform.SetRotation(Rotation.Quaternion());
@@ -49,5 +54,4 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 	Projectile->DamageEffectParams = MakeDamageEffectParamsFromClassDefaults();
 
 	Projectile->FinishSpawning(SpawnTransform);
-	
 }

@@ -4,6 +4,7 @@
 #include "AbilitySystem/Abilities/AuraFireBolt.h"
 #include "Interaction/CombatInterface.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "AbilitySystem/AuraAbilitySystemLibrary.h"
 
 FString UAuraFireBolt::GetDescription(int32 Level)
 {
@@ -112,26 +113,19 @@ void UAuraFireBolt::SpawnProjectiles(const FVector ProjectileTargetLocation, con
 	Rotation.Pitch = bOverridePitch ? PitchOverride : 0.f;
 	const FVector Forward = Rotation.Vector();
 
-	if (IsShowDebugShapes) UKismetSystemLibrary::DrawDebugArrow(AvatarActor, SocketLocation, SocketLocation + Forward * 80.f, 18, FLinearColor::White, 13.f, 1);
-
 	//NumProjectiles = FMath::Min(MaxNumProjectiles, GetAbilityLevel());
-	//if (NumProjectiles == 1)
-	//{
-	//	SpawnProjectile(ProjectileTargetLocation, SocketTag, bOverridePitch, PitchOverride);
-	//	return;
-	//}
-
-	check(NumProjectiles > 0);
-	const float DeltaSpread = NumProjectiles == 0 ? 0 : ProjectileSpread / NumProjectiles;
-	const FVector LeftOfSpread_ = Forward.RotateAngleAxis(-ProjectileSpread / 2.f, FVector::UpVector);
-
-	for (int32 i = 0; i < NumProjectiles; i++)
+	TArray<FRotator> Rotations = UAuraAbilitySystemLibrary::EvenlySpacedRotators(ProjectileSpread, NumProjectiles, Forward);
+	for (FRotator& Rot : Rotations)
 	{
-		const float Angle = DeltaSpread * (i + 0.5f);
-		const FVector Direction = LeftOfSpread_.RotateAngleAxis(Angle, FVector::UpVector);
+		DoSpawnProjectile(SocketLocation, Rot);
+	}
 
-		if (IsShowDebugShapes)
+	if (IsShowDebugShapes)
+	{
+		UKismetSystemLibrary::DrawDebugArrow(AvatarActor, SocketLocation, SocketLocation + Forward * 80.f, 18, FLinearColor::White, 13.f, 1);
+		for (FRotator& Rot : Rotations)
 		{
+			const FVector Direction = Rot.Vector();
 			UKismetSystemLibrary::DrawDebugArrow(AvatarActor, SocketLocation, SocketLocation + Direction * 100.f, 4, FLinearColor::MakeRandomColor(), 10.f);
 		}
 	}
