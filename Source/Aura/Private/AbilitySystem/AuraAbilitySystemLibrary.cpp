@@ -430,7 +430,22 @@ TArray<FVector> UAuraAbilitySystemLibrary::EvenlyRotatedVectors(float Spread, in
 {
 	TArray<FVector> Vectors;
 
-	if (Count <= 1)
+	Count = FMath::Max(Count, 1);
+	const int32 IsOnlyOne = (Count == 1);
+	const int32 IsNotOnlyOne = ~IsOnlyOne & 1;
+
+	const float DeltaSpread = Spread / (Count - 1 * IsNotOnlyOne);
+	const FVector LeftOfSpread = Forward.RotateAngleAxis(-Spread / 2.f, Axis);
+	const float Offset = (DeltaSpread / 2) * (IsOnlyOne);
+
+	for (int32 i = 0; i < Count; i++)
+	{
+		const float Angle = DeltaSpread * (i) + Offset;
+		const FVector Direction = LeftOfSpread.RotateAngleAxis(Angle, Axis);
+		Vectors.Add(Direction);
+	}
+
+	/*if (Count <= 1)
 	{
 		Vectors.Add(Forward.GetSafeNormal());
 	}
@@ -445,7 +460,7 @@ TArray<FVector> UAuraAbilitySystemLibrary::EvenlyRotatedVectors(float Spread, in
 			const FVector Direction = LeftOfSpread.RotateAngleAxis(Angle, Axis);
 			Vectors.Add(Direction);
 		}
-	}
+	}*/
 
 	return Vectors;
 }
