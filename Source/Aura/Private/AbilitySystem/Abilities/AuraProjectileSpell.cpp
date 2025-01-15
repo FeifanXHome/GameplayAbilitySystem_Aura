@@ -7,6 +7,7 @@
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 
 void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
 	const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
@@ -35,10 +36,10 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 	FRotator Rotation = (ProjectileTargetLocation - SocketLocation).Rotation();
 	Rotation.Pitch = bOverridePitch ? PitchOverride : 0.f;
 
-	DoSpawnProjectile(SocketLocation, Rotation);
+	DoSpawnProjectile(ProjectileTargetLocation, SocketLocation, Rotation);
 }
 
-void UAuraProjectileSpell::DoSpawnProjectile(const FVector& SocketLocation, FRotator& Rotation)
+void UAuraProjectileSpell::DoSpawnProjectile(const FVector& ProjectileTargetLocation, const FVector& SocketLocation, FRotator& Rotation, AActor* HomingTaget)
 {
 	FTransform SpawnTransform;
 	SpawnTransform.SetLocation(SocketLocation);
@@ -52,6 +53,27 @@ void UAuraProjectileSpell::DoSpawnProjectile(const FVector& SocketLocation, FRot
 		ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 
 	Projectile->DamageEffectParams = MakeDamageEffectParamsFromClassDefaults();
+
+	// --- Homing ---
+	if (HomingTaget && bLaunchHomingProjectiles)
+	{
+		if (HomingTaget->Implements<UCombatInterface>())
+		{
+			Projectile->ProjectileMovement->HomingTargetComponent = HomingTaget->GetRootComponent();
+		}
+		else
+		{
+			if (Projectile->HomingTagetSceneComponent.IsNull())
+			{
+				Projectile->HomingTagetSceneComponent = NewObject<USceneComponent>(USceneComponent::StaticClass());
+			}
+			Projectile->HomingTagetSceneComponent->SetWorldLocation(ProjectileTargetLocation);
+			Projectile->ProjectileMovement->HomingTargetComponent = Projectile->HomingTagetSceneComponent;
+		}
+		Projectile->ProjectileMovement->HomingAccelerationMagnitude = FMath::FRandRange(HomingAccelerationMin, HomingAccelerationMax);
+		Projectile->ProjectileMovement->bIsHomingProjectile = bLaunchHomingProjectiles;
+	}
+	// --- end Homing ---
 
 	Projectile->FinishSpawning(SpawnTransform);
 }

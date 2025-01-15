@@ -112,12 +112,12 @@ void UAuraFireBolt::SpawnProjectiles(const FVector ProjectileTargetLocation, con
 	FRotator Rotation = (ProjectileTargetLocation - SocketLocation).Rotation();
 	Rotation.Pitch = bOverridePitch ? PitchOverride : 0.f;
 	const FVector Forward = Rotation.Vector();
+	const int32 EffectiveNumProjectiles = FMath::Min(MaxNumProjectiles, GetAbilityLevel());
 
-	//NumProjectiles = FMath::Min(MaxNumProjectiles, GetAbilityLevel());
-	TArray<FRotator> Rotations = UAuraAbilitySystemLibrary::EvenlySpacedRotators(ProjectileSpread, NumProjectiles, Forward);
+	TArray<FRotator> Rotations = UAuraAbilitySystemLibrary::EvenlySpacedRotators(ProjectileSpread, EffectiveNumProjectiles, Forward);
 	for (FRotator& Rot : Rotations)
 	{
-		DoSpawnProjectile(SocketLocation, Rot);
+		DoSpawnProjectile(ProjectileTargetLocation, SocketLocation, Rot, HomingTaget);
 	}
 
 	if (IsShowDebugShapes)
