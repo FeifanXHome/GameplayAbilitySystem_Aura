@@ -78,18 +78,6 @@ void AAuraPlayerController::CursorTrace()
 void AAuraPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 {
 	//UKismetSystemLibrary::PrintString(this, TEXT("AAuraPlayerController::AbilityInputTagPressed"), true, true, FLinearColor::Red, 3.f);
-	if (GetASC()) GetASC()->AbilityInputTagPressed(InputTag);
-
-	if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
-	{
-		bTargeting = ThisActor ? true : false;
-		bAutoRunning = false;
-	}
-	else if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_RMB))
-	{
-		bAutoRunning = false;
-	}
-
 	// Activate Ability By InputTag
 	if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
 	{
@@ -101,6 +89,16 @@ void AAuraPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 	else
 	{
 		if (GetASC()) GetASC()->AbilityInputTagPressed(InputTag);
+	}
+
+	if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
+	{
+		bTargeting = ThisActor ? true : false;
+		bAutoRunning = false;
+	}
+	else if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_RMB))
+	{
+		bAutoRunning = false;
 	}
 }
 
