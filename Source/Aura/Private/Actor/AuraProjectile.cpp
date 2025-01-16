@@ -82,6 +82,7 @@ void AAuraProjectile::Destroyed()
 	if (IsValid(LoopingSoundComponent))
 	{
 		LoopingSoundComponent->Stop();
+		LoopingSoundComponent->DestroyComponent();
 	}
 	// else{UKismetSystemLibrary::PrintString(this, FString(TEXT("Destroyed*******")), true, true, FLinearColor::Red, 3.f);}
 
@@ -160,6 +161,7 @@ void AAuraProjectile::OnHit()
 	if (IsValid(LoopingSoundComponent))
 	{
 		LoopingSoundComponent->Stop();
+		LoopingSoundComponent->DestroyComponent();
 	}
 	// else{UKismetSystemLibrary::PrintString(this, FString(TEXT("OnSphereOverlap*******")), true, true, FLinearColor::Red, 3.f);}
 

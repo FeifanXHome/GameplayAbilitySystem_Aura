@@ -35,6 +35,7 @@ public:
 	bool bStartupAbilitiesGiven = false;
 	//virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 
+	void AbilityInputTagPressed(const FGameplayTag& InputTag);
 	void AbilityInputTagHeld(const FGameplayTag& InputTag);
 	void AbilityInputTagReleased(const FGameplayTag& InputTag);
 	void ForEachAbility(const FForEachAbility& Delegate);
@@ -78,5 +79,8 @@ protected:
 
 	UFUNCTION(Client, Reliable)
 	void ClientUpdateAbilityStatus(const FGameplayTag& AbilityTag, const FGameplayTag& StatusTag, int32 AbilityLevel);
+
+private:
+	FGameplayAbilitySpec ActivateAbilityByInputTag(const FGameplayTag& InputTag);
 
 };

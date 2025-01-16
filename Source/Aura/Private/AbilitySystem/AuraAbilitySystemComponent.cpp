@@ -30,8 +30,8 @@ void UAuraAbilitySystemComponent::AddCharacherAbilities(const TArray<TSubclassOf
 		//GiveAbilityAndActivateOnce(AbilitySpec);
 	}
 
- 	bStartupAbilitiesGiven = true;
- 	AbilitiesGivenDelegate.Broadcast();
+	bStartupAbilitiesGiven = true;
+	AbilitiesGivenDelegate.Broadcast();
 }
 
 void UAuraAbilitySystemComponent::AddCharacherPassiveAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupPassiveAbilities)
@@ -53,10 +53,26 @@ void UAuraAbilitySystemComponent::AddCharacherPassiveAbilities(const TArray<TSub
 // 	DOREPLIFETIME_WITH_PARAMS_FAST(UAuraAbilitySystemComponent, bStartupAbilitiesGiven, Params);
 // }
 
+void UAuraAbilitySystemComponent::AbilityInputTagPressed(const FGameplayTag& InputTag)
+{
+	if (!InputTag.IsValid()) return;
+
+	const FGameplayAbilitySpec& AbilitySpec = ActivateAbilityByInputTag(InputTag);
+	if (AbilitySpec.IsActive())
+	{
+		InvokeReplicatedEvent(EAbilityGenericReplicatedEvent::InputPressed, AbilitySpec.Handle, AbilitySpec.ActivationInfo.GetActivationPredictionKey());
+	}
+}
+
 void UAuraAbilitySystemComponent::AbilityInputTagHeld(const FGameplayTag& InputTag)
 {
 	if (!InputTag.IsValid()) return;
-	
+
+	ActivateAbilityByInputTag(InputTag);
+}
+
+FGameplayAbilitySpec UAuraAbilitySystemComponent::ActivateAbilityByInputTag(const FGameplayTag& InputTag)
+{
 	for (FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities())
 	{
 		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag))
@@ -68,6 +84,7 @@ void UAuraAbilitySystemComponent::AbilityInputTagHeld(const FGameplayTag& InputT
 			}
 		}
 	}
+	return FGameplayAbilitySpec();
 }
 
 void UAuraAbilitySystemComponent::AbilityInputTagReleased(const FGameplayTag& InputTag)
@@ -78,7 +95,11 @@ void UAuraAbilitySystemComponent::AbilityInputTagReleased(const FGameplayTag& In
 	{
 		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag))
 		{
-			AbilitySpecInputReleased(AbilitySpec);
+			if (AbilitySpec.IsActive())
+			{
+				AbilitySpecInputReleased(AbilitySpec);
+				InvokeReplicatedEvent(EAbilityGenericReplicatedEvent::InputReleased, AbilitySpec.Handle, AbilitySpec.ActivationInfo.GetActivationPredictionKey());
+			}
 		}
 	}
 }
@@ -90,7 +111,7 @@ void UAuraAbilitySystemComponent::ForEachAbility(const FForEachAbility& Delegate
 
 	for (const FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities())
 	{
-		if (! Delegate.ExecuteIfBound(AbilitySpec))
+		if (!Delegate.ExecuteIfBound(AbilitySpec))
 		{
 			UE_LOG(LogAura, Error, TEXT("Failed to execute delegate in %hs"), __FUNCTION__);
 		}
@@ -200,11 +221,11 @@ void UAuraAbilitySystemComponent::UpdateAbilityStatuses(int32 Level)
 {
 	UAbilityInfo* AbilityInfo = UAuraAbilitySystemLibrary::GetAbilityInfo(GetAvatarActor());
 	if (AbilityInfo == nullptr) return;
-	
+
 	for (const FAuraAbilityInfo& Info : AbilityInfo->AbilityInformation)
 	{
-		if (! Info.AbilityTag.IsValid()) continue;
-		if (! IsValid(Info.Ability)) continue;
+		if (!Info.AbilityTag.IsValid()) continue;
+		if (!IsValid(Info.Ability)) continue;
 		if (Level < Info.LevelRequirement) continue;
 		// skip the ability that's already in our ability system component's activatable abilities.
 		if (GetSpecFromAbilityTag(Info.AbilityTag) == nullptr)
@@ -255,7 +276,7 @@ void UAuraAbilitySystemComponent::ServerEquipAbility_Implementation(const FGamep
 		const FAuraGameplayTags& GameplayTags = FAuraGameplayTags::Get();
 		const FGameplayTag PrevSlot = GetInputTagFromSpec(*AbilitySpec);
 		const FGameplayTag Status = GetStatusFromSpec(*AbilitySpec);
-		
+
 		const bool IsDiffSlot = !PrevSlot.MatchesTagExact(NewSlot);
 		const bool IsStatusValid = Status == GameplayTags.Abilities_Status_Equipped || Status == GameplayTags.Abilities_Status_Unlocked;
 		if (IsDiffSlot && IsStatusValid)
@@ -274,7 +295,7 @@ void UAuraAbilitySystemComponent::ServerEquipAbility_Implementation(const FGamep
 			}
 
 			MarkAbilitySpecDirty(*AbilitySpec);
-		
+
 			ClientEquipAbility(AbilityTag, GetStatusFromSpec(*AbilitySpec), GetInputTagFromSpec(*AbilitySpec), PrevSlot);
 		}
 	}
@@ -295,7 +316,7 @@ bool UAuraAbilitySystemComponent::GetDescriptionsByAbilityTag(const FGameplayTag
 		if (UAuraGameplayAbility* AuraAbility = Cast<UAuraGameplayAbility>(AbilitySpec->Ability))
 		{
 			OutDescription = AuraAbility->GetDescription(AbilitySpec->Level);
-			OutNextLevelDescription = AuraAbility->GetNextLevelDescription(AbilitySpec->Level+1);
+			OutNextLevelDescription = AuraAbility->GetNextLevelDescription(AbilitySpec->Level + 1);
 
 			return true;
 		}
@@ -354,7 +375,7 @@ void UAuraAbilitySystemComponent::OnRep_ActivateAbilities()
 		}
 	}
 
-	if (! bStartupAbilitiesGiven)
+	if (!bStartupAbilitiesGiven)
 	{
 		bStartupAbilitiesGiven = true;
 		AbilitiesGivenDelegate.Broadcast();

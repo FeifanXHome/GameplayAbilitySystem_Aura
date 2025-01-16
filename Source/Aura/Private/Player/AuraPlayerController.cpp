@@ -15,6 +15,7 @@
 #include "GameFramework/Character.h"
 #include "UI/Widget/DamageTextComponent.h"
 #include "NiagaraFunctionLibrary.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 AAuraPlayerController::AAuraPlayerController()
 {
@@ -76,6 +77,9 @@ void AAuraPlayerController::CursorTrace()
 
 void AAuraPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 {
+	//UKismetSystemLibrary::PrintString(this, TEXT("AAuraPlayerController::AbilityInputTagPressed"), true, true, FLinearColor::Red, 3.f);
+	if (GetASC()) GetASC()->AbilityInputTagPressed(InputTag);
+
 	if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
 	{
 		bTargeting = ThisActor ? true : false;
@@ -85,10 +89,24 @@ void AAuraPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 	{
 		bAutoRunning = false;
 	}
+
+	// Activate Ability By InputTag
+	if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
+	{
+		if (bTargeting || bShiftKeyDown)
+		{
+			if (GetASC()) GetASC()->AbilityInputTagPressed(InputTag);
+		}
+	}
+	else
+	{
+		if (GetASC()) GetASC()->AbilityInputTagPressed(InputTag);
+	}
 }
 
 void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 {
+	//UKismetSystemLibrary::PrintString(this, TEXT("AAuraPlayerController::AbilityInputTagReleased"), true, true, FLinearColor::Red, 3.f);
 	if (GetASC()) GetASC()->AbilityInputTagReleased(InputTag);
 	
 	if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_RMB))
@@ -121,6 +139,8 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 
 void AAuraPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 {
+	//UKismetSystemLibrary::PrintString(this, TEXT("AAuraPlayerController::AbilityInputTagHeld"), true, true, FLinearColor::Red, 3.f);
+	// Activate Ability By InputTag
 	if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
 	{
 		if (bTargeting || bShiftKeyDown)
