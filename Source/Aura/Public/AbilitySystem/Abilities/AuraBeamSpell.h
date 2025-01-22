@@ -25,6 +25,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void TraceFirstTarget(FHitResult& OutHitResult, bool& OutBlockingHit, const FVector& CombatSocketLocation, const FVector& BeamTargetLocation, float SphereRadius = 10.f, bool IsShowDebugShapes = false);
 
+	UFUNCTION(BlueprintCallable)
+	void StoreAdditionalTargets(TArray<AActor*>& OutAdditionalTargets, int32 NumAdditonalTargets = -1, float SphereRadius = 850.f);
+
 protected:
 
 	UPROPERTY(BlueprintReadWrite, Category = "Beam")
@@ -39,5 +42,7 @@ protected:
 	UPROPERTY(BlueprintReadWrite, Category = "Beam")
 	TObjectPtr<ACharacter> OwnerCharacter;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Beam")
+	int32 MaxNumShockTargets = 5;
 
 };

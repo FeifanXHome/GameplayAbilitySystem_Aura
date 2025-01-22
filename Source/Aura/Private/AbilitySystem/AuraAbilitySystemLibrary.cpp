@@ -403,6 +403,40 @@ void UAuraAbilitySystemLibrary::GetLivePlayersWithinRadius(const UObject* WorldC
 	}
 }
 
+void UAuraAbilitySystemLibrary::GetClosestTargets(int32 MaxTargets, const FVector& Origin, const TArray<AActor*>& Actors, TArray<AActor*>& OutClosestTargets)
+{
+	if (MaxTargets<=0 || Actors.Num()==0)
+	{
+		return;
+	}
+	if (MaxTargets >= Actors.Num())
+	{
+		OutClosestTargets = Actors;
+		return;
+	}
+
+	TArray<TPair<AActor*, float>> ActorDistances;
+	for (AActor* Actor : Actors)
+	{
+		if (Actor)
+		{
+			float Distance = FVector::Dist(Actor->GetActorLocation(), Origin);
+			ActorDistances.Add(TPair<AActor*, float>(Actor, Distance));
+		}
+	}
+
+	ActorDistances.Sort(
+		[](const TPair<AActor*, float>& A, const TPair<AActor*, float>& B) {
+			return A.Value < B.Value;
+		}
+	);
+
+	for (int32 i = 0; i < FMath::Min(MaxTargets, ActorDistances.Num()); i++)
+	{
+		OutClosestTargets.Add(ActorDistances[i].Key);
+	}
+}
+
 bool UAuraAbilitySystemLibrary::IsNotFriend(AActor* FirstActor, AActor* SecondActor)
 {
 	const FName PlayerTag(TEXT("Player"));
