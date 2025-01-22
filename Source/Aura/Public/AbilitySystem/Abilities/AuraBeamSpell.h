@@ -22,6 +22,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void StoreOwnerVariables();
 
+	UFUNCTION(BlueprintCallable)
+	void TraceFirstTarget(FHitResult& OutHitResult, bool& OutBlockingHit, const FVector& CombatSocketLocation, const FVector& BeamTargetLocation, float SphereRadius = 10.f, bool IsShowDebugShapes = false);
+
 protected:
 
 	UPROPERTY(BlueprintReadWrite, Category = "Beam")
