@@ -58,16 +58,16 @@ void UAuraBeamSpell::TraceFirstTarget(FHitResult& OutHitResult, bool& OutBlockin
 	OutBlockingHit = OutHitResult.bBlockingHit;
 }
 
-void UAuraBeamSpell::StoreAdditionalTargets(TArray<AActor*>& OutAdditionalTargets, int32 NumAdditonalTargets, float SphereRadius)
+void UAuraBeamSpell::StoreAdditionalTargets(AActor* OriginActor, TArray<AActor*>& OutAdditionalTargets, int32 NumAdditonalTargets, float SphereRadius)
 {
-	check(MouseHitActor);
-
+	if (OriginActor == nullptr) return;
+	
 	TArray<AActor*> ActorsToIgnore;
 	ActorsToIgnore.AddUnique(GetAvatarActorFromActorInfo());
-	ActorsToIgnore.AddUnique(MouseHitActor);
+	ActorsToIgnore.AddUnique(OriginActor);
 
 	//float SphereRadius = 850.f;
-	FVector SphereOrigin = MouseHitActor->GetActorLocation();
+	FVector SphereOrigin = OriginActor->GetActorLocation();
 	TArray<AActor*> OverlappingActors;
 
 	UAuraAbilitySystemLibrary::GetLivePlayersWithinRadius(

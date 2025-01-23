@@ -26,7 +26,7 @@ public:
 	void TraceFirstTarget(FHitResult& OutHitResult, bool& OutBlockingHit, const FVector& CombatSocketLocation, const FVector& BeamTargetLocation, float SphereRadius = 10.f, bool IsShowDebugShapes = false);
 
 	UFUNCTION(BlueprintCallable)
-	void StoreAdditionalTargets(TArray<AActor*>& OutAdditionalTargets, int32 NumAdditonalTargets = -1, float SphereRadius = 850.f);
+	void StoreAdditionalTargets(AActor* OriginActor, TArray<AActor*>& OutAdditionalTargets, int32 NumAdditonalTargets = -1, float SphereRadius = 850.f);
 
 protected:
 
