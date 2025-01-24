@@ -177,6 +177,17 @@ FOnDeathSignature& AAuraCharacterBase::GetOnDeathDelegate()
 	return OnDeathDelegate;
 }
 
+void AAuraCharacterBase::AddDeathDelegate_Implementation(const FDeathDynamicDelegate& Delegate)
+{
+	OnDeathDelegate.AddUnique(Delegate);
+}
+
+void AAuraCharacterBase::RemoveDeathDelegate_Implementation(const FDeathDynamicDelegate& Delegate)
+{
+	OnDeathDelegate.Remove(Delegate);
+	//OnDeathDelegate.RemoveAll(Delegate.GetUObject());
+}
+
 USkeletalMeshComponent* AAuraCharacterBase::GetWeapon_Implementation()
 {
 	return Weapon;

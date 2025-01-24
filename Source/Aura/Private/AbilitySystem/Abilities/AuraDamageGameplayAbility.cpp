@@ -8,13 +8,16 @@
 
 void UAuraDamageGameplayAbility::CauseDamage(AActor* TargetActor)
 {
-	FGameplayEffectSpecHandle DamageSpecHandle = MakeOutgoingGameplayEffectSpec(DamageEffectClass, 1.f);
+	if (TargetActor == nullptr) return;
+	if (UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor) == nullptr) return;
+
+	FGameplayEffectSpecHandle DamageSpecHandle = MakeOutgoingGameplayEffectSpec(DamageEffectClass, GetAbilityLevel());
 	//for (TTuple<FGameplayTag, FScalableFloat>& Pair : DamagTypes)
 	//{
 	//	const float ScaledDamage = Pair.Value.GetValueAtLevel(GetAbilityLevel());
 	//	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(DamageSpecHandle, Pair.Key, ScaledDamage);
 	//}
-	const float ScaledDamage = Damage.GetValueAtLevel(GetAbilityLevel());
+	const float ScaledDamage = GetDamageAtLevel();
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(DamageSpecHandle, DamageType, ScaledDamage);
 
 	//UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
@@ -29,8 +32,11 @@ void UAuraDamageGameplayAbility::CauseDamage(AActor* TargetActor)
 	);
 }
 
-void UAuraDamageGameplayAbility::CauseDamage2(AActor* TargetActor)
+void UAuraDamageGameplayAbility::CauseDamageWithContext(AActor* TargetActor)
 {
+	if (TargetActor == nullptr) return;
+	if (UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor) == nullptr) return;
+
 	FDamageEffectParams DamageEffectParams = MakeDamageEffectParamsFromClassDefaults(TargetActor);
 	FGameplayEffectContextHandle EffectContextHandle = UAuraAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams);
 	check(EffectContextHandle.IsValid());
@@ -44,7 +50,7 @@ FDamageEffectParams UAuraDamageGameplayAbility::MakeDamageEffectParamsFromClassD
 	Params.DamageGameplayEffectClass = DamageEffectClass;
 	Params.SourceAbilitySystemComponent = GetAbilitySystemComponentFromActorInfo();
 	Params.TargetAbilitySystemComponent = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
-	Params.BaseDamage		= Damage.GetValueAtLevel(GetAbilityLevel());
+	Params.BaseDamage		= GetDamageAtLevel();
 	Params.AbilityLevel		= GetAbilityLevel();
 	Params.DamageType		= DamageType;
 	Params.DebuffChance		= DebuffChance;
@@ -68,6 +74,11 @@ FDamageEffectParams UAuraDamageGameplayAbility::MakeDamageEffectParamsFromClassD
 	}
 
 	return Params;
+}
+
+float UAuraDamageGameplayAbility::GetDamageAtLevel() const
+{
+	return Damage.GetValueAtLevel(GetAbilityLevel());
 }
 
 //float UAuraDamageGameplayAbility::GetDamageByDamageType(float InLevel, const FGameplayTag& DamageType)

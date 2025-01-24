@@ -12,6 +12,7 @@ class UAbilitySystemComponent;
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnASCRegisteredSignature, UAbilitySystemComponent* /*InASC*/);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDeathSignature, AActor*, DeadActor);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FDeathDynamicDelegate, AActor*, DeadActor);
 
 USTRUCT(BlueprintType)
 struct FTaggedMontage
@@ -88,6 +89,15 @@ public:
 
 	virtual FOnASCRegisteredSignature& GetOnASCRegisteredDelegate() = 0;
 	virtual FOnDeathSignature& GetOnDeathDelegate() = 0;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void AddDeathDelegate(UPARAM(DisplayName = "Event") const FDeathDynamicDelegate& Delegate);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void RemoveDeathDelegate(UPARAM(DisplayName = "Event") const FDeathDynamicDelegate& Delegate);
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void BindToEvent(UObject* Object, FName FunctionName);
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SetInShockLoop(bool bInLoop);

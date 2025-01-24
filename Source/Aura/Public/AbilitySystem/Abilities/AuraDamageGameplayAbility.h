@@ -21,10 +21,13 @@ public:
 	void CauseDamage(AActor* TargetActor);
 
 	UFUNCTION(BlueprintCallable)
-	void CauseDamage2(AActor* TargetActor);
+	void CauseDamageWithContext(AActor* TargetActor);
 
 	UFUNCTION(BlueprintPure)
 	FDamageEffectParams MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor = nullptr) const;
+
+	UFUNCTION(BlueprintPure)
+	float GetDamageAtLevel() const;
 
 protected:
 
