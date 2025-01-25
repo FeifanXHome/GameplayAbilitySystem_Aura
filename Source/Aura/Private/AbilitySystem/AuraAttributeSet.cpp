@@ -166,6 +166,7 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	FEffectProperties Props;
 	SetEffectProperties(Data, Props);
 
+	checkf(Props.TargetCharacter, TEXT("Target has died ?!?"));
 	if (Props.TargetCharacter->Implements<UCombatInterface>())
 	{
 		if (ICombatInterface::Execute_IsDead(Props.TargetCharacter))

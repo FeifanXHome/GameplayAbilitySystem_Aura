@@ -507,6 +507,12 @@ FGameplayEffectContextHandle UAuraAbilitySystemLibrary::ApplyDamageEffect(const 
 	if (DamageEffectParams.SourceAbilitySystemComponent == nullptr) return EffectContextHandle;
 	if (DamageEffectParams.DamageGameplayEffectClass    == nullptr) return EffectContextHandle;
 
+	if (DamageEffectParams.TargetAbilitySystemComponent->GetAvatarActor()->Implements<UCombatInterface>() && 
+		ICombatInterface::Execute_IsDead(DamageEffectParams.TargetAbilitySystemComponent->GetAvatarActor()))
+	{
+		return EffectContextHandle;
+	}
+
 	const FAuraGameplayTags& GameplayTags = FAuraGameplayTags::Get();
 	const AActor* SourceAvatarActor = DamageEffectParams.SourceAbilitySystemComponent->GetAvatarActor();
 

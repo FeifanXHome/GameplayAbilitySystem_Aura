@@ -5,11 +5,16 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
+#include "Interaction/CombatInterface.h"
 
 void UAuraDamageGameplayAbility::CauseDamage(AActor* TargetActor)
 {
 	if (TargetActor == nullptr) return;
 	if (UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor) == nullptr) return;
+	if (TargetActor->Implements<UCombatInterface>() && ICombatInterface::Execute_IsDead(TargetActor))
+	{
+		return;
+	}
 
 	FGameplayEffectSpecHandle DamageSpecHandle = MakeOutgoingGameplayEffectSpec(DamageEffectClass, GetAbilityLevel());
 	//for (TTuple<FGameplayTag, FScalableFloat>& Pair : DamagTypes)
@@ -36,6 +41,10 @@ void UAuraDamageGameplayAbility::CauseDamageWithContext(AActor* TargetActor)
 {
 	if (TargetActor == nullptr) return;
 	if (UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor) == nullptr) return;
+	if (TargetActor->Implements<UCombatInterface>() && ICombatInterface::Execute_IsDead(TargetActor))
+	{
+		return;
+	}
 
 	FDamageEffectParams DamageEffectParams = MakeDamageEffectParamsFromClassDefaults(TargetActor);
 	FGameplayEffectContextHandle EffectContextHandle = UAuraAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams);
