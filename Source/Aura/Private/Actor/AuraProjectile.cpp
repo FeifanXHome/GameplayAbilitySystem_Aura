@@ -17,7 +17,7 @@
 
 AAuraProjectile::AAuraProjectile()
 {
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	/*
 	I want to spawn a projectile on the server.
@@ -44,6 +44,23 @@ AAuraProjectile::AAuraProjectile()
 	ProjectileMovement->InitialSpeed = 550.f;
 	ProjectileMovement->MaxSpeed = 550.f;
 	ProjectileMovement->ProjectileGravityScale = 0.f;
+
+	SetActorTickInterval(0.2);
+}
+
+void AAuraProjectile::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	const float dis = FVector::Dist(GetActorLocation(), LocationLastFrame);
+	//FString msg2 = FString::Printf(TEXT("dis: %f"), dis);
+	if (dis <= MinDistancePerFrame)
+	{
+		//UKismetSystemLibrary::PrintString(this, msg2, true, true, FLinearColor::Red, 3.f);
+		OnHit();
+		if (HasAuthority()) Destroy();
+	}
+	LocationLastFrame = GetActorLocation();
 }
 
 void AAuraProjectile::BeginPlay()

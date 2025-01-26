@@ -29,6 +29,7 @@ public:
 	TObjectPtr<USceneComponent> HomingTagetSceneComponent;
 
 protected:
+	virtual void Tick(float DeltaSeconds) override;
 	virtual void BeginPlay() override;
 	virtual void Destroyed() override;
 
@@ -38,6 +39,12 @@ protected:
 private:
 
 	void OnHit();
+
+
+	UPROPERTY(EditAnywhere)
+	float MinDistancePerFrame = 10.f;
+
+	FVector LocationLastFrame;
 
 	UPROPERTY(EditDefaultsOnly)
 	float lifeSpan = 15.f;
