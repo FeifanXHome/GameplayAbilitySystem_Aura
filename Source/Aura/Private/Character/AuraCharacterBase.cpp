@@ -9,6 +9,8 @@
 #include "AuraGameplayTags.h"
 #include "Kismet/GameplayStatics.h"
 #include "AbilitySystem/Debuff/DebuffNiagaraComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 AAuraCharacterBase::AAuraCharacterBase()
@@ -34,6 +36,13 @@ AAuraCharacterBase::AAuraCharacterBase()
 	// Weapon->AttachToComponent(InParent, TransformRules, InSocketName);
 	Weapon->SetupAttachment(GetMesh(), FName("WeaponHandSocket"));
 	Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
+void AAuraCharacterBase::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AAuraCharacterBase, bIsStunned);
 }
 
 UAbilitySystemComponent* AAuraCharacterBase::GetAbilitySystemComponent() const
@@ -83,6 +92,44 @@ void AAuraCharacterBase::MulticastHandleDeath_Implementation(const FVector& Deat
 	bDead = true;
 
 	OnDeathDelegate.Broadcast(this);
+}
+
+void AAuraCharacterBase::RegisterGameplayTagEvents()
+{
+	AbilitySystemComponent->RegisterGameplayTagEvent(
+		FAuraGameplayTags::Get().Debuff_Type_LightningStun,
+		EGameplayTagEventType::NewOrRemoved
+	).AddUObject(this, &AAuraCharacterBase::StunTagChanged);
+}
+
+// OnRep_Stunned will only be called on clients when bIsStunned is replicated.
+void AAuraCharacterBase::OnRep_Stunned(const bool& OldStunned)
+{
+	if (AbilitySystemComponent)
+	{
+		const FAuraGameplayTags& GameplayTags = FAuraGameplayTags::Get();
+
+		FGameplayTagContainer BlockedTags;
+		BlockedTags.AddTag(GameplayTags.Player_Block_CursorTrace);
+		BlockedTags.AddTag(GameplayTags.Player_Block_InputHeld);
+		BlockedTags.AddTag(GameplayTags.Player_Block_InputPressed);
+		BlockedTags.AddTag(GameplayTags.Player_Block_InputReleased);
+
+		if (bIsStunned)
+		{
+			AbilitySystemComponent->AddLooseGameplayTags(BlockedTags);
+		}
+		else
+		{
+			AbilitySystemComponent->RemoveLooseGameplayTags(BlockedTags);
+		}
+	}
+}
+
+void AAuraCharacterBase::StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
+{
+	bIsStunned = NewCount > 0;
+	GetCharacterMovement()->MaxWalkSpeed = bIsStunned ? 0.f : BaseWalkSpeed;
 }
 
 // Called when the game starts or when spawned

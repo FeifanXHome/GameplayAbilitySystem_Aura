@@ -241,7 +241,7 @@ void UAuraAttributeSet::HandleDebuff(const FEffectProperties& Props)
 	const float DebuffDuration = UAuraAbilitySystemLibrary::GetDebuffDuration(Props.EffectContextHandle);
 	const float DebuffFrequency = UAuraAbilitySystemLibrary::GetDebuffFrequency(Props.EffectContextHandle);
 	check(DamageType.IsValid());
-	check(DebuffDamage > 0);
+	//check(DebuffDamage > 0);
 	check(DebuffDuration > 0);
 	check(DebuffFrequency > 0);
 
@@ -256,6 +256,14 @@ void UAuraAttributeSet::HandleDebuff(const FEffectProperties& Props)
 
 	FGameplayTag DebuffType = GameplayTags.DamageTypesToDebuffs[DamageType];
 	Effect->InheritableOwnedTagsContainer.AddTag(DebuffType);
+
+	if (DebuffType.MatchesTagExact(GameplayTags.Debuff_Type_LightningStun))
+	{
+		Effect->InheritableOwnedTagsContainer.AddTag(GameplayTags.Player_Block_CursorTrace);
+		Effect->InheritableOwnedTagsContainer.AddTag(GameplayTags.Player_Block_InputHeld);
+		Effect->InheritableOwnedTagsContainer.AddTag(GameplayTags.Player_Block_InputPressed);
+		Effect->InheritableOwnedTagsContainer.AddTag(GameplayTags.Player_Block_InputReleased);
+	}
 
 	Effect->StackingType = EGameplayEffectStackingType::AggregateByTarget;
 	Effect->StackLimitCount = 1;
