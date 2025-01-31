@@ -22,6 +22,10 @@ AAuraCharacterBase::AAuraCharacterBase()
 	BurnDebuffComponent->SetupAttachment(GetRootComponent());
 	BurnDebuffComponent->DebuffTag = FAuraGameplayTags::Get().Debuff_Type_FireBurn;
 
+	StunDebuffComponent = CreateDefaultSubobject<UDebuffNiagaraComponent>(TEXT("StunDebuffComponentt"));
+	StunDebuffComponent->SetupAttachment(GetRootComponent());
+	StunDebuffComponent->DebuffTag = FAuraGameplayTags::Get().Debuff_Type_LightningStun;
+
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 	GetCapsuleComponent()->SetGenerateOverlapEvents(false);
 	GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
@@ -43,6 +47,7 @@ void AAuraCharacterBase::GetLifetimeReplicatedProps(TArray<class FLifetimeProper
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AAuraCharacterBase, bIsStunned);
+	DOREPLIFETIME(AAuraCharacterBase, bIsBurned);
 }
 
 UAbilitySystemComponent* AAuraCharacterBase::GetAbilitySystemComponent() const
@@ -99,7 +104,26 @@ void AAuraCharacterBase::RegisterGameplayTagEvents()
 	AbilitySystemComponent->RegisterGameplayTagEvent(
 		FAuraGameplayTags::Get().Debuff_Type_LightningStun,
 		EGameplayTagEventType::NewOrRemoved
-	).AddUObject(this, &AAuraCharacterBase::StunTagChanged);
+	).AddUObject(this, &AAuraCharacterBase::OnGameplayTagChanged);
+
+	AbilitySystemComponent->RegisterGameplayTagEvent(
+		FAuraGameplayTags::Get().Debuff_Type_FireBurn,
+		EGameplayTagEventType::NewOrRemoved
+	).AddUObject(this, &AAuraCharacterBase::OnGameplayTagChanged);
+}
+
+void AAuraCharacterBase::OnGameplayTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
+{
+	const FAuraGameplayTags& GameplayTags = FAuraGameplayTags::Get();
+	if (CallbackTag.MatchesTagExact(GameplayTags.Debuff_Type_LightningStun))
+	{
+		bIsStunned = NewCount > 0;
+		GetCharacterMovement()->MaxWalkSpeed = bIsStunned ? 0.f : BaseWalkSpeed;
+	}
+	else if (CallbackTag.MatchesTagExact(GameplayTags.Debuff_Type_FireBurn))
+	{
+		bIsBurned = NewCount > 0;
+	}
 }
 
 // OnRep_Stunned will only be called on clients when bIsStunned is replicated.
@@ -110,10 +134,15 @@ void AAuraCharacterBase::OnRep_Stunned(const bool& OldStunned)
 		const FAuraGameplayTags& GameplayTags = FAuraGameplayTags::Get();
 
 		FGameplayTagContainer BlockedTags;
+
+		// Block All Input Motion from AAuraPlayerController
 		BlockedTags.AddTag(GameplayTags.Player_Block_CursorTrace);
 		BlockedTags.AddTag(GameplayTags.Player_Block_InputHeld);
 		BlockedTags.AddTag(GameplayTags.Player_Block_InputPressed);
 		BlockedTags.AddTag(GameplayTags.Player_Block_InputReleased);
+
+		// Trigger UDebuffNiagaraComponent::DebuffTagChanged for StunDebuffComponent
+		BlockedTags.AddTag(GameplayTags.Debuff_Type_LightningStun);
 
 		if (bIsStunned)
 		{
@@ -126,10 +155,26 @@ void AAuraCharacterBase::OnRep_Stunned(const bool& OldStunned)
 	}
 }
 
-void AAuraCharacterBase::StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
+void AAuraCharacterBase::OnRep_Burned(const bool& OldStunned)
 {
-	bIsStunned = NewCount > 0;
-	GetCharacterMovement()->MaxWalkSpeed = bIsStunned ? 0.f : BaseWalkSpeed;
+	if (AbilitySystemComponent)
+	{
+		const FAuraGameplayTags& GameplayTags = FAuraGameplayTags::Get();
+
+		FGameplayTagContainer BlockedTags;
+
+		// Trigger UDebuffNiagaraComponent::DebuffTagChanged for BurnDebuffComponent
+		BlockedTags.AddTag(GameplayTags.Debuff_Type_FireBurn);
+
+		if (bIsBurned)
+		{
+			AbilitySystemComponent->AddLooseGameplayTags(BlockedTags);
+		}
+		else
+		{
+			AbilitySystemComponent->RemoveLooseGameplayTags(BlockedTags);
+		}
+	}
 }
 
 // Called when the game starts or when spawned

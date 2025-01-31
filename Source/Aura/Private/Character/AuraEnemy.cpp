@@ -167,12 +167,16 @@ void AAuraEnemy::InitializeDefaultAttributes() const
 	UAuraAbilitySystemLibrary::InitializeDefaultAttributes(this, CharacterClass, Level, AbilitySystemComponent);
 }
 
-void AAuraEnemy::StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
+void AAuraEnemy::OnGameplayTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
 {
-	Super::StunTagChanged(CallbackTag, NewCount);
+	Super::OnGameplayTagChanged(CallbackTag, NewCount);
 
-	if (HasAuthority() && AuraAIController && AuraAIController->GetBlackboardComponent())
+	const FAuraGameplayTags& GameplayTags = FAuraGameplayTags::Get();
+	if (CallbackTag.MatchesTagExact(GameplayTags.Debuff_Type_LightningStun))
 	{
-		AuraAIController->GetBlackboardComponent()->SetValueAsBool(TEXT("Stunned"), bIsStunned);
+		if (HasAuthority() && AuraAIController && AuraAIController->GetBlackboardComponent())
+		{
+			AuraAIController->GetBlackboardComponent()->SetValueAsBool(TEXT("Stunned"), bIsStunned);
+		}
 	}
 }

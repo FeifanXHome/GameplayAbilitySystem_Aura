@@ -259,6 +259,8 @@ void UAuraAttributeSet::HandleDebuff(const FEffectProperties& Props)
 
 	if (DebuffType.MatchesTagExact(GameplayTags.Debuff_Type_LightningStun))
 	{
+		// [SERVER]:: Block All Input Motion from AAuraPlayerController
+		// [CLIENT]:: Done in AAuraCharacterBase::OnRep_Stunned
 		Effect->InheritableOwnedTagsContainer.AddTag(GameplayTags.Player_Block_CursorTrace);
 		Effect->InheritableOwnedTagsContainer.AddTag(GameplayTags.Player_Block_InputHeld);
 		Effect->InheritableOwnedTagsContainer.AddTag(GameplayTags.Player_Block_InputPressed);

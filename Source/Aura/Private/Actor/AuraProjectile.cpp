@@ -28,7 +28,9 @@ AAuraProjectile::AAuraProjectile()
 	We're going to set bReplicates equal to true.
 	So we now have a replicated projectile class.
 	*/
-	bReplicates = true;
+	//bReplicates = true;
+	SetReplicates(true);
+	SetReplicateMovement(true);
 
 	Sphere = CreateDefaultSubobject<USphereComponent>(TEXT("Spheree"));
 	Sphere->bHiddenInGame = false;
