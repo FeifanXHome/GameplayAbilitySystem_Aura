@@ -97,10 +97,16 @@ public:
 	void RemoveDeathDelegate(UPARAM(DisplayName = "Event") const FDeathDynamicDelegate& Delegate);
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void BindToEvent(UObject* Object, FName FunctionName);
+	void BindToEvent_delete(UObject* Object, FName FunctionName);
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SetInShockLoop(bool bInLoop);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	bool IsBeingShocked() const;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void SetIsBeingShocked(bool bInShock);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	USkeletalMeshComponent* GetWeapon();

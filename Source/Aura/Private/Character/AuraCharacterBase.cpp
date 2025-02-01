@@ -48,6 +48,7 @@ void AAuraCharacterBase::GetLifetimeReplicatedProps(TArray<class FLifetimeProper
 
 	DOREPLIFETIME(AAuraCharacterBase, bIsStunned);
 	DOREPLIFETIME(AAuraCharacterBase, bIsBurned);
+	DOREPLIFETIME(AAuraCharacterBase, bIsBeingShocked);
 }
 
 UAbilitySystemComponent* AAuraCharacterBase::GetAbilitySystemComponent() const
@@ -278,6 +279,16 @@ void AAuraCharacterBase::RemoveDeathDelegate_Implementation(const FDeathDynamicD
 {
 	OnDeathDelegate.Remove(Delegate);
 	//OnDeathDelegate.RemoveAll(Delegate.GetUObject());
+}
+
+bool AAuraCharacterBase::IsBeingShocked_Implementation() const
+{
+	return bIsBeingShocked;
+}
+
+void AAuraCharacterBase::SetIsBeingShocked_Implementation(bool bInShock)
+{
+	bIsBeingShocked = bInShock;
 }
 
 USkeletalMeshComponent* AAuraCharacterBase::GetWeapon_Implementation()
