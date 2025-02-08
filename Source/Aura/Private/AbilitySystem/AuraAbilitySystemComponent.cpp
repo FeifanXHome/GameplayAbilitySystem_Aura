@@ -83,6 +83,7 @@ FGameplayAbilitySpec UAuraAbilitySystemComponent::ActivateAbilityByInputTag(cons
 			{
 				TryActivateAbility(AbilitySpec.Handle);
 			}
+			return AbilitySpec;
 		}
 	}
 	return FGameplayAbilitySpec();
