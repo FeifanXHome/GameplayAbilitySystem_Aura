@@ -294,6 +294,11 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 		FString("Electrocute Ability Tag")
 	);
 
+	GameplayTags.Abilities_Arcane_ArcaneShards = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Arcane.ArcaneShards"),
+		FString("ArcaneShards Ability Tag")
+	);
+
 	/**
 	 * Passive Spells
 	 */
