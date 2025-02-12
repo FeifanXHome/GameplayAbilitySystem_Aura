@@ -95,17 +95,16 @@ bool LineTraceSingleByProfile(const UObject* WorldContextObject,
 	return bHit;
 }
 
-TArray<USceneComponent*> APointCollection::GetGroundPoints1(const FVector& GroundLocation, int32 NumPoints, float YawOverride, float DebugDrawTime)
+TArray<USceneComponent*> APointCollection::GetGroundPoints1(const FVector& GroundLocation, int32 NumPoints, float YawOverride, bool IsShowDebugShapes, float DebugDrawTime)
 {
-	return GetGroundPoints(GroundLocation, NumPoints, YawOverride, DebugDrawTime);
+	return GetGroundPoints(GroundLocation, NumPoints, YawOverride, IsShowDebugShapes, DebugDrawTime);
 }
 
-TArray<USceneComponent*> APointCollection::GetGroundPoints(const FVector& GroundLocation, int32 NumPoints, float YawOverride, float DebugDrawTime)
+TArray<USceneComponent*> APointCollection::GetGroundPoints(const FVector& GroundLocation, int32 NumPoints, float YawOverride, bool IsShowDebugShapes, float DebugDrawTime)
 {
 	checkf( ImmutablePts.Num()>=NumPoints, TEXT("Attempted to accesss ImmutablePts out of bounds."));
 	TArray<USceneComponent*> ArrayCopy;
 	
-	bool IsShowDebugShapes = DebugDrawTime != 0;
 	const FVector Location_Pt_0 = Pt_0->GetComponentLocation();
 	const FVector Location_Actor = GetActorLocation();
 

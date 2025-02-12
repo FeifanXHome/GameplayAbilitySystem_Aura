@@ -16,10 +16,10 @@ public:
 	APointCollection();
 
 	UFUNCTION(BlueprintCallable)
-	TArray<USceneComponent*> GetGroundPoints1(const FVector& GroundLocation, int32 NumPoints, float YawOverride = 0, float DebugDrawTime = 0);
+	TArray<USceneComponent*> GetGroundPoints1(const FVector& GroundLocation, int32 NumPoints, float YawOverride = 0, bool IsShowDebugShapes = false, float DebugDrawTime = 0);
 
 	UFUNCTION(BlueprintPure)
-	TArray<USceneComponent*> GetGroundPoints(const FVector& GroundLocation, int32 NumPoints, float YawOverride = 0, float DebugDrawTime = 0);
+	TArray<USceneComponent*> GetGroundPoints(const FVector& GroundLocation, int32 NumPoints, float YawOverride = 0, bool IsShowDebugShapes = false, float DebugDrawTime = 0);
 
 	UFUNCTION(BlueprintPure)
 	TArray<USceneComponent*> GetGroundPoints2(const FVector& GroundLocation, int32 NumPoints, float YawOverride);
