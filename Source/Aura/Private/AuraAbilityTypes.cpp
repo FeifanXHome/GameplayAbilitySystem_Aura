@@ -19,5 +19,13 @@ bool FAuraGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bo
 	Ar << DeathImpulse;
 	Ar << KnockbackForce;
 
+	Ar << bIsRadialDamage;
+	if (bIsRadialDamage)
+	{
+		Ar << RadialDamageInnerRadius;
+		Ar << RadialDamageOuterRadius;
+		Ar << RadialDamageOrigin;
+	}
+
 	return true;
 }
