@@ -7,6 +7,7 @@
 #include "AuraGameplayTags.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "Interaction/CombatInterface.h"
+#include "Kismet/GameplayStatics.h"
 
 struct AuraDamageStatics
 {
@@ -91,6 +92,9 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	AActor* SourceAvatar = SourceASC ? SourceASC->GetAvatarActor() : nullptr;
 	AActor* TargetAvatar = TargetASC ? TargetASC->GetAvatarActor() : nullptr;
 
+	ICombatInterface* SourceCombatInterface = Cast<ICombatInterface>(SourceAvatar);
+	ICombatInterface* TargetCombatInterface = Cast<ICombatInterface>(TargetAvatar);
+
 	const int32 SourcePlayerLevel = ICombatInterface::Execute_GetPlayerLevel_Check(SourceAvatar, 1);
 	const int32 TargetPlayerLevel = ICombatInterface::Execute_GetPlayerLevel_Check(TargetAvatar, 1);
 
@@ -158,6 +162,40 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 		Resistance = FMath::Clamp(Resistance, 0.f, 100.f);
 
 		DamageTypeValue *= (100.f - Resistance) / 100.f;
+
+		// Radial Damage
+		if (UAuraAbilitySystemLibrary::IsRadialDamage(EffectContextHandle))
+		{
+			FDelegateHandle DelegateHandle;
+			if (TargetCombatInterface)
+			{
+				 DelegateHandle = TargetCombatInterface->GetOnDamageDelegate().AddLambda(
+					[&DamageTypeValue](float DamageAmount)
+					{
+						DamageTypeValue = DamageAmount;
+					}
+				);
+			}
+
+			UGameplayStatics::ApplyRadialDamageWithFalloff(
+				TargetAvatar, 
+				DamageTypeValue, 
+				0.f, 
+				UAuraAbilitySystemLibrary::GetRadialDamageOrigin(EffectContextHandle),
+				UAuraAbilitySystemLibrary::GetRadialDamageInnerRadius(EffectContextHandle),
+				UAuraAbilitySystemLibrary::GetRadialDamageOuterRadius(EffectContextHandle),
+				1.f,
+				UDamageType::StaticClass(),
+				TArray<AActor*>(),
+				SourceAvatar,
+				nullptr, 
+				ECC_Visibility);
+
+			if (TargetCombatInterface)
+			{
+				TargetCombatInterface->GetOnDamageDelegate().Remove(DelegateHandle);
+			}
+		}
 
 		Damage += DamageTypeValue;
 	}
