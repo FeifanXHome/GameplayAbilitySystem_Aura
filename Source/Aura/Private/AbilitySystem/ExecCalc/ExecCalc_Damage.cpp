@@ -156,6 +156,10 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 		const FGameplayEffectAttributeCaptureDefinition CaptureDef = DamageStatics().TagsToCaptureDefs()[ResistanceTag];
 
 		float DamageTypeValue = Spec.GetSetByCallerMagnitude(DamageTypeTag, false, 0.f);
+		if (DamageTypeValue <= 0.f)
+		{
+			continue;
+		}
 
 		float Resistance = 0.f;
 		ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(CaptureDef, EvaluationParameters, Resistance);
@@ -164,6 +168,12 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 		DamageTypeValue *= (100.f - Resistance) / 100.f;
 
 		// Radial Damage
+		// 1. override TakeDamage in AuraCharacterBase. *
+		// 2. create delegate OnDamageDelegate, broadcast damage received in TakeDamage *
+		// 3. Bind lambda to OnDamageDelegate on the Victim here. *
+		// 4. Call UGameplayStatics::ApplyRadialDamageWithFalloff to cause damage (this will result in TakeDamage being called
+		//		on the Victim, which will then broadcast OnDamageDelegate)
+		// 5. In Lambda, set DamageTypeValue to the damage received from the broadcast *
 		if (UAuraAbilitySystemLibrary::IsRadialDamage(EffectContextHandle))
 		{
 			FDelegateHandle DelegateHandle;

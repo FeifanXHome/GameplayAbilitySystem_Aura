@@ -11,9 +11,12 @@ bool FAuraGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bo
 	Ar << bIsCriticalHit;
 
 	Ar << bIsSuccessfulDebuff;
-	Ar << DebuffDamage;
-	Ar << DebuffFrequency;
-	Ar << DebuffDuration;
+	if (bIsSuccessfulDebuff)
+	{
+		Ar << DebuffDamage;
+		Ar << DebuffFrequency;
+		Ar << DebuffDuration;
+	}
 
 	Ar << DamageType;
 	Ar << DeathImpulse;
