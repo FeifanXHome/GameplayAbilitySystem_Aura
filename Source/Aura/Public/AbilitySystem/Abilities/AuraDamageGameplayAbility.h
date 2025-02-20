@@ -21,10 +21,28 @@ public:
 	void CauseDamage(AActor* TargetActor);
 
 	UFUNCTION(BlueprintCallable)
-	void CauseDamageWithContext(AActor* TargetActor, const FVector InRadialDamageOrigin = FVector::ZeroVector);
+	void CauseDamageWithContext(
+		AActor* TargetActor, 
+		const FVector InRadialDamageOrigin = FVector::ZeroVector,
+		bool bOverrideKnockbackDirection = false,
+		FVector KnockbackDirectionOverride = FVector::ZeroVector,
+		bool bOverrideDeathImpulse = false,
+		FVector DeathImpulseDirectionOverride = FVector::ZeroVector,
+		bool bOverridePitch = true,
+		float PitchOverride = 35.f
+	);
 
 	UFUNCTION(BlueprintPure)
-	FDamageEffectParams MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor = nullptr, const FVector InRadialDamageOrigin = FVector::ZeroVector) const;
+	FDamageEffectParams MakeDamageEffectParamsFromClassDefaults(
+		AActor* TargetActor = nullptr, 
+		const FVector InRadialDamageOrigin = FVector::ZeroVector,
+		bool bOverrideKnockbackDirection = false,
+		FVector KnockbackDirectionOverride = FVector::ZeroVector,
+		bool bOverrideDeathImpulse = false,
+		FVector DeathImpulseDirectionOverride = FVector::ZeroVector,
+		bool bOverridePitch = true,
+		float PitchOverride = 35.f
+	) const;
 
 	UFUNCTION(BlueprintPure)
 	float GetDamageAtLevel() const;

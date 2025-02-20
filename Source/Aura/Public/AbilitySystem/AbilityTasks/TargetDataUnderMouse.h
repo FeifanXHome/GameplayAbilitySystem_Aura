@@ -19,12 +19,14 @@ class AURA_API UTargetDataUnderMouse : public UAbilityTask
 public:
 	UFUNCTION(BlueprintCallable, Category = "Ability|Tasks", meta = (DisplayName = "TargetDataUnderMouse",
 		HidePin = "OwningAbility", DefaultToSelf = "OwningAbility", BlueprintInternalUseOnly = "TRUE"))
-	static UTargetDataUnderMouse* CreateTargetDataUnderMouse(UGameplayAbility* OwningAbility);
+	static UTargetDataUnderMouse* CreateTargetDataUnderMouse(UGameplayAbility* OwningAbility, ECollisionChannel InTraceChannel);
 
 	UPROPERTY(BlueprintAssignable)
 	FmouseTargetDataSignature ValidData;
 	
 private:
+	ECollisionChannel TraceChannel;
+
 	virtual void Activate() override;
 	void SendMouseCursorData();
 

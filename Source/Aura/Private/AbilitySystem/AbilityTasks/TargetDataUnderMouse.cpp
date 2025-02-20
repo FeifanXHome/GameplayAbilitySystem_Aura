@@ -5,9 +5,11 @@
 #include "AbilitySystemComponent.h"
 #include "Aura/Aura.h"
 
-UTargetDataUnderMouse* UTargetDataUnderMouse::CreateTargetDataUnderMouse(UGameplayAbility* OwningAbility)
+UTargetDataUnderMouse* UTargetDataUnderMouse::CreateTargetDataUnderMouse(UGameplayAbility* OwningAbility, ECollisionChannel InTraceChannel)
 {
 	UTargetDataUnderMouse* MyObj = NewAbilityTask<UTargetDataUnderMouse>(OwningAbility);
+	MyObj->TraceChannel = InTraceChannel;
+	check(InTraceChannel == ECC_Target || InTraceChannel == ECC_ExcludePlayers);
 	return MyObj;
 }
 
@@ -41,7 +43,7 @@ void UTargetDataUnderMouse::SendMouseCursorData()
 
 	APlayerController* PC = Ability->GetCurrentActorInfo()->PlayerController.Get();
 	FHitResult CursorHit;
-	PC->GetHitResultUnderCursor(ECC_Target, false, CursorHit);
+	PC->GetHitResultUnderCursor(TraceChannel, false, CursorHit);
 	//check(CursorHit.bBlockingHit);
 
 	FGameplayAbilityTargetData_SingleTargetHit* Data = new FGameplayAbilityTargetData_SingleTargetHit();
