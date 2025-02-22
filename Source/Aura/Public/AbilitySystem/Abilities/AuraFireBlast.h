@@ -24,6 +24,8 @@ public:
 	TArray<AAuraFireBall*> SpawnFireBalls();
 	
 protected:
+	AAuraFireBall* DoSpawnFireBall(const FVector& InitialLocation, const FRotator& InitialRotation);
+	
 	UPROPERTY(EditDefaultsOnly, Category = "FireBlast")
 	int32 NumFireBalls = 12;
 
