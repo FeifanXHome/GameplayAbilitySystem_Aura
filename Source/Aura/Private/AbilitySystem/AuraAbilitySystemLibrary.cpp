@@ -536,7 +536,20 @@ TArray<FVector> UAuraAbilitySystemLibrary::EvenlyRotatedVectors(float Spread, in
 	const int32 IsOnlyOne = (Count == 1);
 	const int32 IsNotOnlyOne = ~IsOnlyOne & 1;
 
-	const float DeltaSpread = Spread / (Count - 1 * IsNotOnlyOne);
+// 	const float DeltaSpread = Spread / (Count - 1 * IsNotOnlyOne);
+	float DeltaSpread = Spread;
+	if (Count > 1)
+	{
+		if (Spread == 360)
+		{
+			DeltaSpread = Spread / Count;
+		}
+		else
+		{
+			DeltaSpread = Spread / (Count - 1);
+		}
+	}
+
 	const FVector LeftOfSpread = Forward.RotateAngleAxis(-Spread / 2.f, Axis);
 	const float Offset = (DeltaSpread / 2) * (IsOnlyOne);
 

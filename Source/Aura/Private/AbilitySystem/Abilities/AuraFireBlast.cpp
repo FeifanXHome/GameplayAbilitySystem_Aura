@@ -102,6 +102,7 @@ AAuraFireBall* UAuraFireBlast::DoSpawnFireBall(const FVector& InitialLocation, c
 		ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 
 	FireBall->DamageEffectParams = MakeDamageEffectParamsFromClassDefaults();
+	FireBall->ReturnToActor = GetAvatarActorFromActorInfo();
 
 	FireBall->FinishSpawning(SpawnTransform);
 

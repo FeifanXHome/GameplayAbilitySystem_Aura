@@ -28,8 +28,8 @@ AAuraProjectile::AAuraProjectile()
 	We're going to set bReplicates equal to true.
 	So we now have a replicated projectile class.
 	*/
-	//bReplicates = true;
-	SetReplicates(true);
+	bReplicates = true;
+	//SetReplicates(true); LogActor: Warning: SetReplicates called on non-initialized actor BP_FireBall_C_24. Directly setting bReplicates is the correct procedure for pre-init actors.
 	SetReplicateMovement(true);
 
 	Sphere = CreateDefaultSubobject<USphereComponent>(TEXT("Spheree"));
