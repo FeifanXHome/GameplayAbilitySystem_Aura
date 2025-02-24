@@ -111,33 +111,9 @@ void AAuraProjectile::Destroyed()
 void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, 
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	// DamageEffectSpecHandle is only being set on server in UAuraProjectileSpell::SpawnProjectile
-	// DamageEffectSpecHandle should be null on clients
-	if (HasAuthority())
+	if (! IsValidOverlap(OtherActor))
 	{
-		check(DamageEffectParams.SourceAbilitySystemComponent != nullptr);
-
-		AActor* SourceAvatarActor = DamageEffectParams.SourceAbilitySystemComponent->GetAvatarActor();
-		if (SourceAvatarActor == OtherActor) return;
-		if (! UAuraAbilitySystemLibrary::IsNotFriend(SourceAvatarActor, OtherActor)) return;
-	}
-	else
-	{
-		check(DamageEffectParams.SourceAbilitySystemComponent == nullptr);
-
-		// Case: Enemy
-		AActor* owner = GetOwner();
-		if (owner == OtherActor) return;
-		if (! UAuraAbilitySystemLibrary::IsNotFriend(owner, OtherActor)) return;
-
-		// Case: Aura
-		const AAuraPlayerState* AuraPlayerState = GetOwner<AAuraPlayerState>();
-		if (AuraPlayerState)
-		{
-			AActor* AvatarActor = (AuraPlayerState->GetAbilitySystemComponent()->GetAvatarActor());
-			if (AvatarActor == OtherActor) return;
-			if (! UAuraAbilitySystemLibrary::IsNotFriend(AvatarActor, OtherActor)) return;
-		}
+		return;
 	}
 
 	if (!bHit)
@@ -147,29 +123,68 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 
 	if (HasAuthority())
 	{
-		if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
-		{
-			DamageEffectParams.TargetAbilitySystemComponent = TargetASC;
-			DamageEffectParams.DeathImpulse   = GetActorForwardVector() * DamageEffectParams.DeathImpulseMagnitude;
-
-			const bool bKnockback = FMath::RandRange(1, 100) < DamageEffectParams.KnockbackChance;
-			if (bKnockback)
-			{
-				FRotator Rotation = GetActorRotation();
-				Rotation.Pitch = 45.f;
-
-				const FVector KnockbackDirection = Rotation.Vector();
-				const FVector KnockbackForce = KnockbackDirection * DamageEffectParams.KnockbackForceMagnitude;
-
-				DamageEffectParams.KnockbackForce = KnockbackForce;
-			}
-			
-			FGameplayEffectContextHandle EffectContextHandle = UAuraAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams);
-			check(EffectContextHandle.IsValid());
-		}
+		ApplyDamage(OtherActor);
 
 		Destroy();
 	}
+}
+
+void AAuraProjectile::ApplyDamage_Implementation(AActor* OtherActor)
+{
+	if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
+	{
+		DamageEffectParams.TargetAbilitySystemComponent = TargetASC;
+		DamageEffectParams.DeathImpulse = GetActorForwardVector() * DamageEffectParams.DeathImpulseMagnitude;
+
+		const bool bKnockback = FMath::RandRange(1, 100) < DamageEffectParams.KnockbackChance;
+		if (bKnockback)
+		{
+			FRotator Rotation = GetActorRotation();
+			Rotation.Pitch = 45.f;
+
+			const FVector KnockbackDirection = Rotation.Vector();
+			const FVector KnockbackForce = KnockbackDirection * DamageEffectParams.KnockbackForceMagnitude;
+
+			DamageEffectParams.KnockbackForce = KnockbackForce;
+		}
+
+		FGameplayEffectContextHandle EffectContextHandle = UAuraAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams);
+		check(EffectContextHandle.IsValid());
+	}
+}
+
+bool AAuraProjectile::IsValidOverlap(AActor* OtherActor)
+{
+	// DamageEffectSpecHandle is only being set on server in UAuraProjectileSpell::SpawnProjectile
+	// DamageEffectSpecHandle should be null on clients
+	if (HasAuthority())
+	{
+		check(DamageEffectParams.SourceAbilitySystemComponent != nullptr);
+
+		AActor* SourceAvatarActor = DamageEffectParams.SourceAbilitySystemComponent->GetAvatarActor();
+		if (SourceAvatarActor == OtherActor) return false;
+		if (!UAuraAbilitySystemLibrary::IsNotFriend(SourceAvatarActor, OtherActor)) return false;
+	}
+	else
+	{
+		check(DamageEffectParams.SourceAbilitySystemComponent == nullptr);
+
+		// Case: Enemy
+		AActor* owner = GetOwner();
+		if (owner == OtherActor) return false;
+		if (!UAuraAbilitySystemLibrary::IsNotFriend(owner, OtherActor)) return false;
+
+		// Case: Aura
+		const AAuraPlayerState* AuraPlayerState = GetOwner<AAuraPlayerState>();
+		if (AuraPlayerState)
+		{
+			AActor* AvatarActor = (AuraPlayerState->GetAbilitySystemComponent()->GetAvatarActor());
+			if (AvatarActor == OtherActor) return false;
+			if (!UAuraAbilitySystemLibrary::IsNotFriend(AvatarActor, OtherActor)) return false;
+		}
+	}
+
+	return true;
 }
 
 void AAuraProjectile::OnHit()
