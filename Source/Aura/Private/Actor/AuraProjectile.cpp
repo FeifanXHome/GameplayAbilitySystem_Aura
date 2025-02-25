@@ -129,7 +129,15 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 	}
 }
 
-void AAuraProjectile::ApplyDamage_Implementation(AActor* OtherActor)
+void AAuraProjectile::ApplyDamageWithoutKnockback(AActor* TargetActor)
+{
+	FDamageEffectParams Params = DamageEffectParams;
+	DamageEffectParams.KnockbackChance = 0;
+	ApplyDamage(TargetActor);
+	DamageEffectParams = Params;
+}
+
+/*void AAuraProjectile::ApplyDamage(AActor* OtherActor)
 {
 	if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
 	{
@@ -151,6 +159,69 @@ void AAuraProjectile::ApplyDamage_Implementation(AActor* OtherActor)
 		FGameplayEffectContextHandle EffectContextHandle = UAuraAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams);
 		check(EffectContextHandle.IsValid());
 	}
+}*/
+
+void AAuraProjectile::ApplyDamage(
+	AActor* TargetActor,
+	bool bOverrideKnockbackDirection, FVector KnockbackDirectionOverride,
+	bool bOverrideDeathImpulse, FVector DeathImpulseDirectionOverride,
+	bool bOverridePitch, float PitchOverride)
+{
+	if (TargetActor == nullptr) return;
+	if (!TargetActor->Implements<UCombatInterface>()) return;
+
+	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
+	if (!IsValid(TargetASC))
+	{
+		check(IsValid(TargetASC));
+		return;
+	}
+
+	DamageEffectParams.TargetAbilitySystemComponent = TargetASC;
+	FDamageEffectParams Params = DamageEffectParams;
+
+	check(IsValid(TargetActor));
+	if (IsValid(TargetActor))
+	{
+		FRotator Rotation = GetActorRotation();
+		Rotation.Pitch = bOverridePitch ? PitchOverride : 0;
+
+		const FVector ToTarget = Rotation.Vector();
+		Params.DeathImpulse = ToTarget * Params.DeathImpulseMagnitude;
+
+		const bool bKnockback = FMath::RandRange(1, 100) < Params.KnockbackChance;
+		if (bKnockback) Params.KnockbackForce = ToTarget * Params.KnockbackForceMagnitude;
+	}
+
+	if (bOverrideKnockbackDirection)
+	{
+		KnockbackDirectionOverride.Normalize();
+		Params.KnockbackForce = KnockbackDirectionOverride * Params.KnockbackForceMagnitude;
+		if (bOverridePitch)
+		{
+			FRotator KnockbackRotation = KnockbackDirectionOverride.Rotation();
+			KnockbackRotation.Pitch = PitchOverride;
+			Params.KnockbackForce = KnockbackRotation.Vector() * Params.KnockbackForceMagnitude;
+		}
+	}
+
+	if (bOverrideDeathImpulse)
+	{
+		DeathImpulseDirectionOverride.Normalize();
+		Params.DeathImpulse = DeathImpulseDirectionOverride * Params.DeathImpulseMagnitude;
+		if (bOverridePitch)
+		{
+			FRotator DeathImpulseRotation = DeathImpulseDirectionOverride.Rotation();
+			DeathImpulseRotation.Pitch = PitchOverride;
+			Params.DeathImpulse = DeathImpulseRotation.Vector() * Params.DeathImpulseMagnitude;
+		}
+	}
+
+	//FString msg2 = FString::Printf(TEXT("ApplyDamage: %s"), *TargetActor->GetName());
+	//UKismetSystemLibrary::PrintString(this, msg2, true, true, FLinearColor::Red, 3.f);
+
+	FGameplayEffectContextHandle EffectContextHandle = UAuraAbilitySystemLibrary::ApplyDamageEffect(Params);
+	check(EffectContextHandle.IsValid());
 }
 
 bool AAuraProjectile::IsValidOverlap(AActor* OtherActor)

@@ -36,8 +36,17 @@ protected:
 	UFUNCTION()
 	virtual void OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	UFUNCTION(BlueprintNativeEvent)
-	void ApplyDamage(AActor* OtherActor);
+	void ApplyDamageWithoutKnockback(AActor* TargetActor);
+
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
+	void ApplyDamage(AActor* TargetActor,
+		bool bOverrideKnockbackDirection = false,
+		FVector KnockbackDirectionOverride = FVector::ZeroVector,
+		bool bOverrideDeathImpulse = false,
+		FVector DeathImpulseDirectionOverride = FVector::ZeroVector,
+		bool bOverridePitch = true,
+		float PitchOverride = 45.f
+	);
 
 	bool IsValidOverlap(AActor* OtherActor);
 

@@ -24,6 +24,6 @@ void AAuraFireBall::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AA
 
 	if (HasAuthority())
 	{
-		ApplyDamage(OtherActor);
+		ApplyDamageWithoutKnockback(OtherActor);
 	}
 }

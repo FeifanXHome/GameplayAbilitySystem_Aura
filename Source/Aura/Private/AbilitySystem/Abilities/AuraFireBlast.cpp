@@ -97,12 +97,14 @@ AAuraFireBall* UAuraFireBlast::DoSpawnFireBall(const FVector& InitialLocation, c
 	AAuraFireBall* FireBall = GetWorld()->SpawnActorDeferred<AAuraFireBall>(
 		FireBallClass,
 		SpawnTransform,
-		GetOwningActorFromActorInfo(),
+		GetAvatarActorFromActorInfo(), // AvatarActor -> Owner
 		CurrentActorInfo->PlayerController->GetPawn(), // Cast<APawn>(GetOwningActorFromActorInfo()),
 		ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 
 	FireBall->DamageEffectParams = MakeDamageEffectParamsFromClassDefaults();
 	FireBall->ReturnToActor = GetAvatarActorFromActorInfo();
+
+	FireBall->ExplosionDamageParams = MakeDamageEffectParamsFromClassDefaults();
 
 	FireBall->FinishSpawning(SpawnTransform);
 
