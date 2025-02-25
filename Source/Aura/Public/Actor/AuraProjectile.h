@@ -40,12 +40,10 @@ protected:
 
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
 	void ApplyDamage(AActor* TargetActor,
-		bool bOverrideKnockbackDirection = false,
-		FVector KnockbackDirectionOverride = FVector::ZeroVector,
-		bool bOverrideDeathImpulse = false,
-		FVector DeathImpulseDirectionOverride = FVector::ZeroVector,
-		bool bOverridePitch = true,
-		float PitchOverride = 45.f
+		bool bOverrideKnockbackDirection = false, FVector KnockbackDirectionOverride = FVector::ZeroVector, float KnockbackMagnitude = 0.f,
+		bool bOverrideDeathImpulse = false, FVector DeathImpulseDirectionOverride = FVector::ZeroVector, float DeathImpulseMagnitude = 0.f,
+		bool bOverridePitch = true, float PitchOverride = 45.f,
+		bool bInIsRadial = false, FVector RadialOrigin = FVector::ZeroVector, float RadialInnerRadius = 0.f, float RadialOuterRadius = 0.f
 	);
 
 	bool IsValidOverlap(AActor* OtherActor);

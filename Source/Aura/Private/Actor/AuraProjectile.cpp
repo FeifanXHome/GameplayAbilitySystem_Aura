@@ -163,9 +163,11 @@ void AAuraProjectile::ApplyDamageWithoutKnockback(AActor* TargetActor)
 
 void AAuraProjectile::ApplyDamage(
 	AActor* TargetActor,
-	bool bOverrideKnockbackDirection, FVector KnockbackDirectionOverride,
-	bool bOverrideDeathImpulse, FVector DeathImpulseDirectionOverride,
-	bool bOverridePitch, float PitchOverride)
+	bool bOverrideKnockbackDirection, FVector KnockbackDirectionOverride, float KnockbackMagnitude,
+	bool bOverrideDeathImpulse, FVector DeathImpulseDirectionOverride, float DeathImpulseMagnitude,
+	bool bOverridePitch, float PitchOverride,
+	bool bInIsRadial, FVector RadialOrigin, float RadialInnerRadius, float RadialOuterRadius
+)
 {
 	if (TargetActor == nullptr) return;
 	if (!TargetActor->Implements<UCombatInterface>()) return;
@@ -195,6 +197,8 @@ void AAuraProjectile::ApplyDamage(
 
 	if (bOverrideKnockbackDirection)
 	{
+		if (KnockbackMagnitude != 0.f) Params.KnockbackForceMagnitude = KnockbackMagnitude;
+
 		KnockbackDirectionOverride.Normalize();
 		Params.KnockbackForce = KnockbackDirectionOverride * Params.KnockbackForceMagnitude;
 		if (bOverridePitch)
@@ -207,6 +211,8 @@ void AAuraProjectile::ApplyDamage(
 
 	if (bOverrideDeathImpulse)
 	{
+		if (DeathImpulseMagnitude != 0.f) Params.DeathImpulseMagnitude = DeathImpulseMagnitude;
+		
 		DeathImpulseDirectionOverride.Normalize();
 		Params.DeathImpulse = DeathImpulseDirectionOverride * Params.DeathImpulseMagnitude;
 		if (bOverridePitch)
@@ -215,6 +221,14 @@ void AAuraProjectile::ApplyDamage(
 			DeathImpulseRotation.Pitch = PitchOverride;
 			Params.DeathImpulse = DeathImpulseRotation.Vector() * Params.DeathImpulseMagnitude;
 		}
+	}
+
+	if (bInIsRadial)
+	{
+		Params.bIsRadialDamage = bInIsRadial;
+		Params.RadialDamageOrigin = RadialOrigin;
+		Params.RadialDamageInnerRadius = RadialInnerRadius;
+		Params.RadialDamageOuterRadius = RadialOuterRadius;
 	}
 
 	//FString msg2 = FString::Printf(TEXT("ApplyDamage: %s"), *TargetActor->GetName());
