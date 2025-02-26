@@ -48,8 +48,8 @@ void UAuraProjectileSpell::DoSpawnProjectile(const FVector& ProjectileTargetLoca
 	AAuraProjectile* Projectile = GetWorld()->SpawnActorDeferred<AAuraProjectile>(
 		ProjectileClass,
 		SpawnTransform,
-		GetOwningActorFromActorInfo(),
-		Cast<APawn>(GetOwningActorFromActorInfo()),
+		GetAvatarActorFromActorInfo(),
+		CurrentActorInfo->PlayerController->GetPawn(),
 		ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 
 	Projectile->DamageEffectParams = MakeDamageEffectParamsFromClassDefaults();
