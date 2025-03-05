@@ -45,11 +45,16 @@ void UAuraProjectileSpell::DoSpawnProjectile(const FVector& ProjectileTargetLoca
 	SpawnTransform.SetLocation(SocketLocation);
 	SpawnTransform.SetRotation(Rotation.Quaternion());
 
+	//AActor* AvatarActor = GetAvatarActorFromActorInfo(); // AuraCharacter   AuraEnemy
+	//AActor* OwningActor = GetOwningActorFromActorInfo(); // AuraPlayerState AuraEnemy
+	//APawn* Pawn = Cast<APawn>(GetOwningActorFromActorInfo());
+	//APawn* Pawn2 = CurrentActorInfo->PlayerController->GetPawn(); // AuraCharacter NULL
+
 	AAuraProjectile* Projectile = GetWorld()->SpawnActorDeferred<AAuraProjectile>(
 		ProjectileClass,
 		SpawnTransform,
 		GetAvatarActorFromActorInfo(),
-		CurrentActorInfo->PlayerController->GetPawn(),
+		Cast<APawn>(GetAvatarActorFromActorInfo()), // CurrentActorInfo->PlayerController->GetPawn(), // Cast<APawn>(GetOwningActorFromActorInfo()), 
 		ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 
 	Projectile->DamageEffectParams = MakeDamageEffectParamsFromClassDefaults();
