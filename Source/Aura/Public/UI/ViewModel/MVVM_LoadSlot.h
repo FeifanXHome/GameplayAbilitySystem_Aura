@@ -23,4 +23,13 @@ public:
 
 	void InitializeSlot();
 
+	UPROPERTY()
+	FString PlayerName = FString();
+
+	UPROPERTY()
+	FString LoadSlotName = FString();
+
+	UPROPERTY()
+	int32 SlotIndex = 0;
+
 };
