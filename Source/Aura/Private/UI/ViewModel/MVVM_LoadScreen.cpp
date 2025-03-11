@@ -98,6 +98,7 @@ void UMVVM_LoadScreen::LoadData()
 
 		LoadSlot->SlotStatus = SaveObject->SaveSlotStatus;
 		LoadSlot->SetPlayerName(SaveObject->PlayerName);
+		LoadSlot->SetMapName(SaveObject->MapName);
 		LoadSlot->InitializeSlot();
 	}
 }
