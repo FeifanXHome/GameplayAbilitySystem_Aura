@@ -78,6 +78,23 @@ void UMVVM_LoadScreen::DeleteButtonPressed()
 	}
 }
 
+void UMVVM_LoadScreen::PlayButtonPressed()
+{
+	AGameModeBase* GameModeBase = UGameplayStatics::GetGameMode(this);
+	AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(GameModeBase);
+	//check(AuraGameMode);
+	if (!IsValid(AuraGameMode))
+	{
+		GEngine->AddOnScreenDebugMessage(1, 15.f, FColor::Magenta, FString("Please switch to Single Player"));
+		return;
+	}
+
+	if (IsValid(SelectedSlot))
+	{
+		AuraGameMode->TravelToMap(SelectedSlot);
+	}
+}
+
 void UMVVM_LoadScreen::LoadData()
 {
 	AGameModeBase* GameModeBase = UGameplayStatics::GetGameMode(this);
