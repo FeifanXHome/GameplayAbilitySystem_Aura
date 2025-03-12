@@ -7,6 +7,7 @@
 #include "Game/LoadScreenSaveGame.h"
 #include "EngineUtils.h"
 #include "GameFramework/PlayerStart.h"
+#include "Game/AuraGameInstance.h"
 
 void AAuraGameModeBase::SaveSlotData(UMVVM_LoadSlot* LoadSlot, int32 SlotIndex)
 {
@@ -61,12 +62,15 @@ void AAuraGameModeBase::TravelToMap(UMVVM_LoadSlot* LoadSlot)
 
 AActor* AAuraGameModeBase::ChoosePlayerStart_Implementation(AController* Player)
 {
+	UAuraGameInstance* AuraGameInstance = Cast<UAuraGameInstance>(GetGameInstance());
+	FName PlayerStartTag = AuraGameInstance->PlayerStartTag;
+
 	AActor* SelectedActor = nullptr;
 	UWorld* World = GetWorld();
 	for (TActorIterator<APlayerStart> It(World); It; ++It)
 	{
 		APlayerStart* PlayerStart = *It;
-		if (PlayerStart->PlayerStartTag == FName("TheTag"))
+		if (PlayerStart->PlayerStartTag == PlayerStartTag)
 		{
 			SelectedActor = PlayerStart;
 			break;
