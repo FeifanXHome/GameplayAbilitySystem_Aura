@@ -5,6 +5,8 @@
 #include "UI/ViewModel/MVVM_LoadSlot.h"
 #include "Kismet/GameplayStatics.h"
 #include "Game/LoadScreenSaveGame.h"
+#include "EngineUtils.h"
+#include "GameFramework/PlayerStart.h"
 
 void AAuraGameModeBase::SaveSlotData(UMVVM_LoadSlot* LoadSlot, int32 SlotIndex)
 {
@@ -55,6 +57,27 @@ void AAuraGameModeBase::TravelToMap(UMVVM_LoadSlot* LoadSlot)
 	
 	TSoftObjectPtr<UWorld> Map = Maps[MapName];
 	UGameplayStatics::OpenLevelBySoftObjectPtr(LoadSlot, Map);
+}
+
+AActor* AAuraGameModeBase::ChoosePlayerStart_Implementation(AController* Player)
+{
+	AActor* SelectedActor = nullptr;
+	UWorld* World = GetWorld();
+	for (TActorIterator<APlayerStart> It(World); It; ++It)
+	{
+		APlayerStart* PlayerStart = *It;
+		if (PlayerStart->PlayerStartTag == FName("TheTag"))
+		{
+			SelectedActor = PlayerStart;
+			break;
+		}
+		else if (SelectedActor == nullptr)
+		{
+			SelectedActor = PlayerStart;
+		}
+	}
+
+	return SelectedActor;
 }
 
 void AAuraGameModeBase::BeginPlay()
