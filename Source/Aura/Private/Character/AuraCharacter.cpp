@@ -12,6 +12,9 @@
 #include "NiagaraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Game/AuraGameModeBase.h"
+#include "Game/LoadScreenSaveGame.h"
 
 AAuraCharacter::AAuraCharacter()
 {
@@ -159,6 +162,19 @@ void AAuraCharacter::HideMagicCircle_Implementation()
 		AuraPlayerController->HideMagicCircle();
 		//AuraPlayerController->bShowMouseCursor = true;
 	}
+}
+
+void AAuraCharacter::SaveProgress_Implementation(const FName& CheckpointTag)
+{
+	AGameModeBase* GameModeBase = UGameplayStatics::GetGameMode(this);
+	AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(GameModeBase);
+	if (!IsValid(AuraGameMode)) return;
+
+	ULoadScreenSaveGame* SaveObject = AuraGameMode->RetrieveInGameSaveData();
+	if (SaveObject == nullptr) return;
+	
+	SaveObject->PlayerStartTag = CheckpointTag;
+	AuraGameMode->SaveInGameProgressData(SaveObject);
 }
 
 void AAuraCharacter::MulticastLevelUpParticles_Implementation() const
