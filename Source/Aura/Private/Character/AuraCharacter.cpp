@@ -50,7 +50,40 @@ void AAuraCharacter::PossessedBy(AController* NewController)
 
 	// Init ability actor info for the Server
 	InitAbilityActorInfo();
-	AddCharacherAbilities();
+	LoadProgress();
+	// AddCharacherAbilities(); We're going to load it in from disk
+}
+
+void AAuraCharacter::LoadProgress()
+{
+	AGameModeBase* GameModeBase = UGameplayStatics::GetGameMode(this);
+	AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(GameModeBase);
+	if (!IsValid(AuraGameMode)) return;
+
+	ULoadScreenSaveGame* SaveObject = AuraGameMode->RetrieveInGameSaveData();
+	if (SaveObject == nullptr) return;
+
+	// Player
+	if (AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>())
+	{
+		AuraPlayerState->SetLevel(SaveObject->PlayerLevel);
+		AuraPlayerState->SetXP(SaveObject->XP);
+		AuraPlayerState->SetAttributePoints(SaveObject->AttributePoints);
+		AuraPlayerState->SetSpellPoints(SaveObject->SpellPoints);
+	}
+
+	if (SaveObject->bFirstTimeLoadIn)
+	{
+		InitializeDefaultAttributes();
+		AddCharacherAbilities();
+	}
+
+	// Attributes
+	if (UAuraAttributeSet* AuraAttributeSet = Cast<UAuraAttributeSet>(GetAttributeSet()))
+	{
+
+	}
+
 }
 
 void AAuraCharacter::OnRep_PlayerState()
@@ -175,6 +208,7 @@ void AAuraCharacter::SaveProgress_Implementation(const FName& CheckpointTag)
 	if (SaveObject == nullptr) return;
 
 	//
+	SaveObject->bFirstTimeLoadIn = false;
 	SaveObject->PlayerStartTag = CheckpointTag;
 
 	// Player
@@ -239,5 +273,5 @@ void AAuraCharacter::InitAbilityActorInfo()
 		}
 	}
 
-	InitializeDefaultAttributes();
+	// InitializeDefaultAttributes(); We're going to load it in from disk
 }
