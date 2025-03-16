@@ -30,7 +30,7 @@ void UOverlayWidgetController::BroadcastInitialValues()
 	OnMaxManaChanged.Broadcast(GetAuraAS()->GetMaxMana());
 
 	OnXPChanged(GetAuraPS()->GetXP());
-	OnPlayerLevelChangedDelegate.Broadcast(GetAuraPS()->GetPlayerLevel());
+	OnPlayerLevelChangedDelegate.Broadcast(GetAuraPS()->GetPlayerLevel(), false);
 }
 
 void UOverlayWidgetController::BindCallbacksToDependencies()
@@ -38,9 +38,9 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 	GetAuraPS()->OnXPChangedDelegate.AddUObject(this, &UOverlayWidgetController::OnXPChanged);
 	GetAuraPS()->OnLevelChangedDelegate.
 		AddLambda(
-			[this](int32 NewLevel)
+			[this](int32 NewLevel, bool bLevelUp)
 			{
-				OnPlayerLevelChangedDelegate.Broadcast(NewLevel);
+				OnPlayerLevelChangedDelegate.Broadcast(NewLevel, bLevelUp);
 			}
 	);
 

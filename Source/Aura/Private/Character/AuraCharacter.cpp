@@ -16,6 +16,7 @@
 #include "Game/AuraGameModeBase.h"
 #include "Game/LoadScreenSaveGame.h"
 #include "AbilitySystem/AuraAttributeSet.h"
+#include "AbilitySystem/AuraAbilitySystemLibrary.h"
 
 AAuraCharacter::AAuraCharacter()
 {
@@ -63,27 +64,25 @@ void AAuraCharacter::LoadProgress()
 	ULoadScreenSaveGame* SaveObject = AuraGameMode->RetrieveInGameSaveData();
 	if (SaveObject == nullptr) return;
 
-	// Player
-	if (AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>())
-	{
-		AuraPlayerState->SetLevel(SaveObject->PlayerLevel);
-		AuraPlayerState->SetXP(SaveObject->XP);
-		AuraPlayerState->SetAttributePoints(SaveObject->AttributePoints);
-		AuraPlayerState->SetSpellPoints(SaveObject->SpellPoints);
-	}
-
 	if (SaveObject->bFirstTimeLoadIn)
 	{
 		InitializeDefaultAttributes();
 		AddCharacherAbilities();
 	}
-
-	// Attributes
-	if (UAuraAttributeSet* AuraAttributeSet = Cast<UAuraAttributeSet>(GetAttributeSet()))
+	else
 	{
+		// Player
+		if (AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>())
+		{
+			AuraPlayerState->SetLevel(SaveObject->PlayerLevel);
+			AuraPlayerState->SetXP(SaveObject->XP);
+			AuraPlayerState->SetAttributePoints(SaveObject->AttributePoints);
+			AuraPlayerState->SetSpellPoints(SaveObject->SpellPoints);
+		}
 
+		// Attributes
+		UAuraAbilitySystemLibrary::InitializeDefaultAttributesFromSaveData(this, AbilitySystemComponent, SaveObject);
 	}
-
 }
 
 void AAuraCharacter::OnRep_PlayerState()
