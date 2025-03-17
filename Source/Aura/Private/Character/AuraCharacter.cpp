@@ -83,6 +83,12 @@ void AAuraCharacter::LoadProgress()
 
 		// Attributes
 		UAuraAbilitySystemLibrary::InitializeDefaultAttributesFromSaveData(this, AbilitySystemComponent, SaveObject);
+
+		// Abilities
+		if (UAuraAbilitySystemComponent* AuraASC = Cast<UAuraAbilitySystemComponent>(GetAbilitySystemComponent()))
+		{
+			AuraASC->AddCharacherAbilitiesFromSaveData(SaveObject);
+		}
 	}
 }
 
@@ -234,15 +240,17 @@ void AAuraCharacter::SaveProgress_Implementation(const FName& CheckpointTag)
 	// Abilities
 	if (UAuraAbilitySystemComponent* AuraASC = Cast<UAuraAbilitySystemComponent>(GetAbilitySystemComponent()))
 	{
+		SaveObject->SavedAbilities.Empty();
 
 		FForEachAbility SaveAbilityDelegate;
 		SaveAbilityDelegate.BindLambda(
 			[this, SaveObject](const FGameplayAbilitySpec& AbilitySpec)
 			{
 				FGameplayTag AbilityTag = UAuraAbilitySystemComponent::GetAbilityTagFromSpec(AbilitySpec);
+				check(AbilityTag.IsValid());
 				UAbilityInfo* AbilityInfo = UAuraAbilitySystemLibrary::GetAbilityInfo(this);
 				FAuraAbilityInfo Info = AbilityInfo->FindAbilityInfoForTag(AbilityTag);
-				TSubclassOf<UGameplayAbility> AbilityClass = Info.Ability;
+				//TSubclassOf<UGameplayAbility> AbilityClass = Info.Ability;
 
 				FSavedAbility SavedAbility;
 
@@ -253,7 +261,7 @@ void AAuraCharacter::SaveProgress_Implementation(const FName& CheckpointTag)
 				SavedAbility.AbilityType	= Info.AbilityType;
 				SavedAbility.AbilityLevel	= AbilitySpec.Level;
 
-				SaveObject->SavedAbilities.Add(SavedAbility);
+				SaveObject->SavedAbilities.AddUnique(SavedAbility);
 			}
 		);
 		AuraASC->ForEachAbility(SaveAbilityDelegate);

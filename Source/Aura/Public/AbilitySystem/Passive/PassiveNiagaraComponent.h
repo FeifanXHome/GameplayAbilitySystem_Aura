@@ -7,6 +7,8 @@
 #include "GameplayTagContainer.h"
 #include "PassiveNiagaraComponent.generated.h"
 
+class UAuraAbilitySystemComponent;
+
 /**
  * 
  */
@@ -28,5 +30,7 @@ protected:
 
 	UFUNCTION()
 	void OnOwnerDeath(AActor* DeadActor);
+
+	void ActivateIfEquiped(UAuraAbilitySystemComponent* AuraASC);
 
 };

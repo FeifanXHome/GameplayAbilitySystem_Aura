@@ -322,6 +322,11 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 		FString("Mana Siphon")
 	);
 
+	GameplayTags.Abilities_Passive_ListenForEvent = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Passive.ListenForEvent"),
+		FString("Mana Siphon")
+	);
+
 	/**
 	 * Cooldown
 	 */
