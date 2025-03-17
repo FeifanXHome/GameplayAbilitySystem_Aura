@@ -17,6 +17,7 @@
 #include "Game/LoadScreenSaveGame.h"
 #include "AbilitySystem/AuraAttributeSet.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
+#include "AbilitySystem/Data/AbilityInfo.h"
 
 AAuraCharacter::AAuraCharacter()
 {
@@ -199,6 +200,8 @@ void AAuraCharacter::HideMagicCircle_Implementation()
 
 void AAuraCharacter::SaveProgress_Implementation(const FName& CheckpointTag)
 {
+	if (!HasAuthority()) return;
+
 	AGameModeBase* GameModeBase = UGameplayStatics::GetGameMode(this);
 	AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(GameModeBase);
 	if (!IsValid(AuraGameMode)) return;
@@ -228,6 +231,34 @@ void AAuraCharacter::SaveProgress_Implementation(const FName& CheckpointTag)
 		SaveObject->Vigor = AuraAttributeSet->GetVigor();
 	}
 	
+	// Abilities
+	if (UAuraAbilitySystemComponent* AuraASC = Cast<UAuraAbilitySystemComponent>(GetAbilitySystemComponent()))
+	{
+
+		FForEachAbility SaveAbilityDelegate;
+		SaveAbilityDelegate.BindLambda(
+			[this, SaveObject](const FGameplayAbilitySpec& AbilitySpec)
+			{
+				FGameplayTag AbilityTag = UAuraAbilitySystemComponent::GetAbilityTagFromSpec(AbilitySpec);
+				UAbilityInfo* AbilityInfo = UAuraAbilitySystemLibrary::GetAbilityInfo(this);
+				FAuraAbilityInfo Info = AbilityInfo->FindAbilityInfoForTag(AbilityTag);
+				TSubclassOf<UGameplayAbility> AbilityClass = Info.Ability;
+
+				FSavedAbility SavedAbility;
+
+				SavedAbility.GameplayAbility = AbilitySpec.Ability->GetClass();
+				SavedAbility.AbilityTag		= UAuraAbilitySystemComponent::GetAbilityTagFromSpec(AbilitySpec);
+				SavedAbility.AbilityStatus	= UAuraAbilitySystemComponent::GetStatusFromSpec(AbilitySpec);
+				SavedAbility.AbilitySlot	= UAuraAbilitySystemComponent::GetInputTagFromSpec(AbilitySpec);
+				SavedAbility.AbilityType	= Info.AbilityType;
+				SavedAbility.AbilityLevel	= AbilitySpec.Level;
+
+				SaveObject->SavedAbilities.Add(SavedAbility);
+			}
+		);
+		AuraASC->ForEachAbility(SaveAbilityDelegate);
+	}
+
 	AuraGameMode->SaveInGameProgressData(SaveObject);
 }
 
