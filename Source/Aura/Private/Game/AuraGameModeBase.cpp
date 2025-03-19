@@ -8,6 +8,8 @@
 #include "EngineUtils.h"
 #include "GameFramework/PlayerStart.h"
 #include "Game/AuraGameInstance.h"
+#include "Interaction/SaveInterface.h"
+#include "Serialization/ObjectAndNameAsStringProxyArchive.h"
 
 void AAuraGameModeBase::SaveSlotData(UMVVM_LoadSlot* LoadSlot, int32 SlotIndex)
 {
@@ -71,6 +73,41 @@ void AAuraGameModeBase::SaveInGameProgressData(ULoadScreenSaveGame* SaveObject)
 	AuraGameInstance->PlayerStartTag = SaveObject->PlayerStartTag;
 
 	UGameplayStatics::SaveGameToSlot(SaveObject, InGameLoadSlotName, InGameLoadSlotIndex);
+}
+
+void AAuraGameModeBase::SaveWorldState(UWorld* World)
+{
+	ULoadScreenSaveGame* SaveGameObject = RetrieveInGameSaveData();
+	if (SaveGameObject == nullptr) return;
+
+	FString WorldName = World->GetMapName();
+	WorldName.RemoveFromStart(World->StreamingLevelsPrefix);
+
+	FSavedMap SavedMap = SaveGameObject->GetSavedMapWithMapName(WorldName); // no matter if existing.
+	SavedMap.MapAssetName = WorldName;
+	SavedMap.SavedActors.Empty(); // clear it out, we'll fill it in with "actors"
+
+	for (FActorIterator It(World); It; ++It)
+	{
+		AActor* Actor = *It;
+		if (!IsValid(Actor)) continue;
+		if (!Actor->Implements<USaveInterface>()) continue;
+		
+		FSavedActor SavedActor;
+		SavedActor.ActorName = Actor->GetFName();
+		SavedActor.Transform = Actor->GetTransform();
+
+		// Serialize the variables with SaveGame specifier
+		FMemoryWriter MemoryWriter(SavedActor.Bytes);
+		FObjectAndNameAsStringProxyArchive Archive(MemoryWriter, true);
+		Actor->Serialize(Archive);
+
+		SavedMap.SavedActors.AddUnique(SavedActor);
+	}
+
+	SaveGameObject->AddOrUpdateSavedMap(SavedMap);
+
+	SaveInGameProgressData(SaveGameObject);
 }
 
 void AAuraGameModeBase::TravelToMap(UMVVM_LoadSlot* LoadSlot)

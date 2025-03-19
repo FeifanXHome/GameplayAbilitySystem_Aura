@@ -50,6 +50,11 @@ struct FSavedMap
 	TArray<FSavedActor> SavedActors;
 };
 
+inline bool operator ==(const FSavedMap& Left, const FSavedMap& Right)
+{
+	return Left.MapAssetName == Right.MapAssetName;
+}
+
 USTRUCT(BlueprintType)
 struct FSavedAbility
 {
@@ -148,5 +153,7 @@ public:
 	bool GetSavedMapWithMapName(const FString& InMapName, FSavedMap& OutMap);
 	FSavedMap GetSavedMapWithMapName(const FString& InMapName);
 	bool HasMap(const FString& InMapName);
+
+	void AddOrUpdateSavedMap(const FSavedMap& InSavedMap);
 
 };

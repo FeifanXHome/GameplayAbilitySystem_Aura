@@ -33,3 +33,17 @@ bool ULoadScreenSaveGame::HasMap(const FString& InMapName)
 	return IsHasMap;
 }
 
+void ULoadScreenSaveGame::AddOrUpdateSavedMap(const FSavedMap& InSavedMap)
+{
+	for (FSavedMap& Map : SavedMaps)
+	{
+		if (Map == InSavedMap)
+		{
+			Map = InSavedMap;
+			return;
+		}
+	}
+
+	SavedMaps.Add(InSavedMap);
+}
+
