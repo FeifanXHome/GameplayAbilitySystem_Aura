@@ -10,6 +10,7 @@
 #include "Game/AuraGameInstance.h"
 #include "Interaction/SaveInterface.h"
 #include "Serialization/ObjectAndNameAsStringProxyArchive.h"
+#include "Aura/AuraLogChannels.h"
 
 void AAuraGameModeBase::SaveSlotData(UMVVM_LoadSlot* LoadSlot, int32 SlotIndex)
 {
@@ -78,7 +79,11 @@ void AAuraGameModeBase::SaveInGameProgressData(ULoadScreenSaveGame* SaveObject)
 void AAuraGameModeBase::SaveWorldState(UWorld* World)
 {
 	ULoadScreenSaveGame* SaveGameObject = RetrieveInGameSaveData();
-	if (SaveGameObject == nullptr) return;
+	if (SaveGameObject == nullptr)
+	{
+		UE_LOG(LogAura, Error, TEXT("Failed to load slot"), __FUNCTION__, *GetNameSafe(this));
+		return;
+	}
 
 	FString WorldName = World->GetMapName();
 	WorldName.RemoveFromStart(World->StreamingLevelsPrefix);
@@ -108,6 +113,44 @@ void AAuraGameModeBase::SaveWorldState(UWorld* World)
 	SaveGameObject->AddOrUpdateSavedMap(SavedMap);
 
 	SaveInGameProgressData(SaveGameObject);
+}
+
+void AAuraGameModeBase::LoadWorldState(UWorld* World)
+{
+	ULoadScreenSaveGame* SaveGameObject = RetrieveInGameSaveData();
+	if (SaveGameObject == nullptr)
+	{
+		UE_LOG(LogAura, Error, TEXT("Failed to load slot"), __FUNCTION__, *GetNameSafe(this));
+		return;
+	}
+
+	FString WorldName = World->GetMapName();
+	WorldName.RemoveFromStart(World->StreamingLevelsPrefix);
+
+	FSavedMap SavedMap;
+	if (!SaveGameObject->GetSavedMapWithMapName(WorldName, SavedMap)) return;
+	
+	for (FActorIterator It(World); It; ++It)
+	{
+		AActor* Actor = *It;
+		if (!IsValid(Actor)) continue;
+		if (!Actor->Implements<USaveInterface>()) continue;
+
+		FSavedActor* SavedActor = SavedMap.SavedActors.FindByKey(Actor->GetFName());
+		if (SavedActor == nullptr) continue;
+
+		if (ISaveInterface::Execute_ShouldLoadTransform(Actor))
+		{
+			Actor->SetActorTransform(SavedActor->Transform);
+		}
+
+		// Deserialize the variables with SaveGame specifier
+		FMemoryReader MemoryWriter(SavedActor->Bytes);
+		FObjectAndNameAsStringProxyArchive Archive(MemoryWriter, true);
+		Actor->Serialize(Archive); // converts binary bytes back into variables
+
+		ISaveInterface::Execute_LoadActor(Actor);
+	}
 }
 
 void AAuraGameModeBase::TravelToMap(UMVVM_LoadSlot* LoadSlot)

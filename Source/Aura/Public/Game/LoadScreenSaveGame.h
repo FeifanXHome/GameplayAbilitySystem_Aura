@@ -37,6 +37,10 @@ inline bool operator ==(const FSavedActor& Left, const FSavedActor& Right)
 {
 	return Left.ActorName == Right.ActorName;
 }
+inline bool operator ==(const FSavedActor& Left, const FName& Right)
+{
+	return Left.ActorName == Right;
+}
 
 USTRUCT()
 struct FSavedMap

@@ -5,7 +5,7 @@
 
 bool ULoadScreenSaveGame::GetSavedMapWithMapName(const FString& InMapName, FSavedMap& OutMap)
 {
-	if (!InMapName.IsEmpty()) return false;
+	if (InMapName.IsEmpty()) return false;
 
 	for (const FSavedMap& Map : SavedMaps)
 	{
