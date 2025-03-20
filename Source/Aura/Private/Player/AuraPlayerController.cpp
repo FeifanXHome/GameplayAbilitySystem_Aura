@@ -5,7 +5,7 @@
 #include "EnhancedInputSubsystems.h"
 //#include "EnhancedInputComponent.h"
 #include "Input/AuraInputComponent.h"
-#include "Interaction/EnemyInterface.h"
+#include "Interaction/HighlightInterface.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "Components/SplineComponent.h"
