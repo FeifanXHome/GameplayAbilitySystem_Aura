@@ -70,7 +70,12 @@ void AAuraCharacter::LoadProgress()
 	if (!IsValid(AuraGameMode)) return;
 
 	ULoadScreenSaveGame* SaveObject = AuraGameMode->RetrieveInGameSaveData();
-	if (SaveObject == nullptr) return;
+	if (SaveObject == nullptr)
+	{
+		InitializeDefaultAttributes();
+		AddCharacherAbilities();
+		return;
+	}
 
 	if (SaveObject->bFirstTimeLoadIn)
 	{
