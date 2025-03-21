@@ -5,6 +5,7 @@
 #include "EnhancedInputSubsystems.h"
 //#include "EnhancedInputComponent.h"
 #include "Input/AuraInputComponent.h"
+#include "Interaction/EnemyInterface.h"
 #include "Interaction/HighlightInterface.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystemBlueprintLibrary.h"
@@ -99,8 +100,8 @@ void AAuraPlayerController::CursorTrace()
 {
 	if (GetASC() && GetASC()->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_CursorTrace))
 	{
-		if (LastActor) LastActor->UnHighlightActor();
-		if (ThisActor) ThisActor->UnHighlightActor();
+		if (LastActor) IHighlightInterface::Execute_UnHighlightActor_Check(LastActor);
+		if (ThisActor) IHighlightInterface::Execute_UnHighlightActor_Check(ThisActor);
 		LastActor = nullptr;
 		ThisActor = nullptr;
 		return;
@@ -111,12 +112,12 @@ void AAuraPlayerController::CursorTrace()
 	if (!CursorHit.bBlockingHit) return;
 
 	LastActor = ThisActor;
-	ThisActor = CursorHit.GetActor();
+	ThisActor = IHighlightInterface::Return_If_HighlightInterface(CursorHit.GetActor());
 
 	if (LastActor != ThisActor)
 	{
-		if (LastActor) LastActor->UnHighlightActor();
-		if (ThisActor) ThisActor->HighlightActor();
+		if (LastActor) IHighlightInterface::Execute_UnHighlightActor_Check(LastActor);
+		if (ThisActor) IHighlightInterface::Execute_HighlightActor_Check(ThisActor);
 	}
 }
 
@@ -131,7 +132,7 @@ void AAuraPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 	// Activate Ability By InputTag
 	if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
 	{
-		if (bTargeting || bShiftKeyDown)
+		if (TargetingStatus == ETargetingStatus::TargetingEnemy || bShiftKeyDown)
 		{
 			if (GetASC()) GetASC()->AbilityInputTagPressed(InputTag);
 		}
@@ -143,7 +144,12 @@ void AAuraPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 
 	if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
 	{
-		bTargeting = ThisActor ? true : false;
+		TargetingStatus = ETargetingStatus::NotTargeting;
+		if (IsValid(ThisActor))
+		{
+			TargetingStatus = 
+				ThisActor->Implements<UEnemyInterface>() ? ETargetingStatus::TargetingEnemy : ETargetingStatus::TargetingNonEnemy;
+		}
 		bAutoRunning = false;
 	}
 	else if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_RMB))
@@ -189,7 +195,7 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 		}
 
 		FollowTime = 0.f;
-		bTargeting = false;
+		TargetingStatus = ETargetingStatus::NotTargeting;
 	}
 }
 
@@ -204,7 +210,7 @@ void AAuraPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 	// Activate Ability By InputTag
 	if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
 	{
-		if (bTargeting || bShiftKeyDown)
+		if (TargetingStatus == ETargetingStatus::TargetingEnemy || bShiftKeyDown)
 		{
 			if (GetASC()) GetASC()->AbilityInputTagHeld(InputTag);
 		}
