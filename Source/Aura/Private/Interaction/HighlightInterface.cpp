@@ -20,3 +20,11 @@ void IHighlightInterface::Execute_UnHighlightActor_Check(UObject* O)
 		IHighlightInterface::Execute_UnHighlightActor(O);
 	}
 }
+
+void IHighlightInterface::Execute_SetMoveToLocation_Check(UObject* O, FVector& OutDestination)
+{
+	if (O && O->Implements<UHighlightInterface>())
+	{
+		IHighlightInterface::Execute_SetMoveToLocation(O, OutDestination);
+	}
+}

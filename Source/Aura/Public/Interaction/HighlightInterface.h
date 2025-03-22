@@ -33,6 +33,10 @@ public:
 	void UnHighlightActor();
 	static void Execute_UnHighlightActor_Check(UObject* O);
 
+	UFUNCTION(BlueprintNativeEvent)
+	void SetMoveToLocation(FVector& OutDestination);
+	static void Execute_SetMoveToLocation_Check(UObject* O, FVector& OutDestination);
+
 };
 
 template<typename T>
