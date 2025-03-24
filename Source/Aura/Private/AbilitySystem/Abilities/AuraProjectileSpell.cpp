@@ -68,7 +68,7 @@ void UAuraProjectileSpell::DoSpawnProjectile(const FVector& ProjectileTargetLoca
 		}
 		else
 		{
-			if (Projectile->HomingTagetSceneComponent.IsNull())
+			if (Projectile->HomingTagetSceneComponent == nullptr)
 			{
 				Projectile->HomingTagetSceneComponent = NewObject<USceneComponent>(USceneComponent::StaticClass());
 			}
