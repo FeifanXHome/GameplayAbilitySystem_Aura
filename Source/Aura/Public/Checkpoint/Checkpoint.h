@@ -33,7 +33,8 @@ public:
 	virtual void SetMoveToLocation_Implementation(FVector& OutDestination) override;
 	/* end Highlight Interface */
 
-	UPROPERTY(BlueprintReadWrite, SaveGame)
+	//UPROPERTY(BlueprintReadWrite, SaveGame)
+	UPROPERTY(BlueprintReadWrite)
 	bool bReached = false;
 
 	UPROPERTY(EditAnywhere)
@@ -60,8 +61,7 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USceneComponent> MoveToComponent;
 
-private:
-
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USphereComponent> Sphere;
+
 };

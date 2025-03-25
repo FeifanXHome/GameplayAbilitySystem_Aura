@@ -76,13 +76,19 @@ void AAuraGameModeBase::SaveInGameProgressData(ULoadScreenSaveGame* SaveObject)
 	UGameplayStatics::SaveGameToSlot(SaveObject, InGameLoadSlotName, InGameLoadSlotIndex);
 }
 
-void AAuraGameModeBase::SaveWorldState(UWorld* World)
+void AAuraGameModeBase::SaveWorldState(UWorld* World, const FString& DestinationMapAssetName)
 {
 	ULoadScreenSaveGame* SaveGameObject = RetrieveInGameSaveData();
 	if (SaveGameObject == nullptr)
 	{
 		UE_LOG(LogAura, Error, TEXT("Failed to load slot"), __FUNCTION__, *GetNameSafe(this));
 		return;
+	}
+
+	if (!DestinationMapAssetName.IsEmpty())
+	{
+		SaveGameObject->MapAssetName = DestinationMapAssetName;
+		SaveGameObject->MapName = GetMapNameFromMapAssetName(DestinationMapAssetName);
 	}
 
 	FString WorldName = World->GetMapName();
@@ -161,6 +167,19 @@ void AAuraGameModeBase::TravelToMap(UMVVM_LoadSlot* LoadSlot)
 	
 	TSoftObjectPtr<UWorld> Map = Maps[MapName];
 	UGameplayStatics::OpenLevelBySoftObjectPtr(LoadSlot, Map);
+}
+
+FString AAuraGameModeBase::GetMapNameFromMapAssetName(const FString& MapAssetName) const
+{
+	for (auto& Map : Maps)
+	{
+		if (Map.Value.ToSoftObjectPath().GetAssetName() == MapAssetName)
+		{
+			return Map.Key;
+		}
+	}
+	check(false);
+	return FString();
 }
 
 AActor* AAuraGameModeBase::ChoosePlayerStart_Implementation(AController* Player)

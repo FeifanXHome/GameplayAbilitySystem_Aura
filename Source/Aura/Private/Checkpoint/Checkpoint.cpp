@@ -6,6 +6,7 @@
 #include "Interaction/PlayerInterface.h"
 #include "Kismet/GameplayStatics.h"
 #include "Game/AuraGameModeBase.h"
+#include "Components/StaticMeshComponent.h"
 
 ACheckpoint::ACheckpoint(const FObjectInitializer& ObjectInitializer)
 	:Super(ObjectInitializer)
