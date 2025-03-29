@@ -81,7 +81,11 @@ void ACheckpoint::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 		AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(GameModeBase);
 		if (IsValid(AuraGameMode))
 		{
-			AuraGameMode->SaveWorldState(GetWorld());
+			UWorld* World = GetWorld();
+			FString MapName = World->GetMapName();
+			MapName.RemoveFromStart(World->StreamingLevelsPrefix);
+
+			AuraGameMode->SaveWorldState(World, MapName);
 		}
 
 		IPlayerInterface::Execute_SaveProgress(OtherActor, PlayerStartTag);

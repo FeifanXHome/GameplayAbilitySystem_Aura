@@ -11,6 +11,7 @@
 #include "Interaction/SaveInterface.h"
 #include "Serialization/ObjectAndNameAsStringProxyArchive.h"
 #include "Aura/AuraLogChannels.h"
+#include "GameFramework/Character.h"
 
 void AAuraGameModeBase::SaveSlotData(UMVVM_LoadSlot* LoadSlot, int32 SlotIndex)
 {
@@ -25,6 +26,7 @@ void AAuraGameModeBase::SaveSlotData(UMVVM_LoadSlot* LoadSlot, int32 SlotIndex)
 	LoadScreenSaveGame->SaveSlotStatus = Taken;
 	LoadScreenSaveGame->MapName = LoadSlot->GetMapName();
 	LoadScreenSaveGame->PlayerStartTag = LoadSlot->PlayerStartTag;
+	LoadScreenSaveGame->MapAssetName = LoadSlot->MapAssetName;
 
 	UGameplayStatics::SaveGameToSlot(LoadScreenSaveGame, LoadSlot->LoadSlotName, SlotIndex);
 }
@@ -204,6 +206,18 @@ AActor* AAuraGameModeBase::ChoosePlayerStart_Implementation(AController* Player)
 	}
 
 	return SelectedActor;
+}
+
+void AAuraGameModeBase::PlayerDied(ACharacter* DeadCharacter)
+{
+	ULoadScreenSaveGame* SaveGameObject = RetrieveInGameSaveData();
+	if (SaveGameObject == nullptr)
+	{
+		UE_LOG(LogAura, Error, TEXT("Failed to load slot"), __FUNCTION__, *GetNameSafe(this));
+		return;
+	}
+
+	UGameplayStatics::OpenLevel(DeadCharacter, FName(SaveGameObject->MapAssetName));
 }
 
 void AAuraGameModeBase::BeginPlay()
