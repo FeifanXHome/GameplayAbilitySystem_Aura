@@ -13,6 +13,7 @@ class UCharacterClassInfo;
 class UAbilityInfo;
 struct FDamageEffectParams;
 class ULoadScreenSaveGame;
+class ULootTiers;
 
 /**
  * 
@@ -72,6 +73,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|AbilityInfo")
 	static UAbilityInfo* GetAbilityInfo(const UObject* WorldContextObject);
+
+	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|LootTiers", meta = (DefaultToSelf = "WorldContextObject"))
+	static ULootTiers* GetLootTiers(const UObject* WorldContextObject);
 
 	/*
 	 * Effect Context Getters
