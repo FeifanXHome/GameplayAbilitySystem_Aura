@@ -577,8 +577,8 @@ TArray<FRotator> UAuraAbilitySystemLibrary::EvenlySpacedRotators(float Spread, i
 TArray<FVector> UAuraAbilitySystemLibrary::EvenlyRotatedVectors(float Spread, int32 Count, const FVector Forward, const FVector Axis)
 {
 	TArray<FVector> Vectors;
+	if (Count <= 0) return Vectors;
 
-	Count = FMath::Max(Count, 1);
 	const int32 IsOnlyOne = (Count == 1);
 	const int32 IsNotOnlyOne = ~IsOnlyOne & 1;
 
