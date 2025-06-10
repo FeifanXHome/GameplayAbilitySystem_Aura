@@ -59,7 +59,7 @@ APointCollection::APointCollection()
 }
 
 /** Util for drawing result of single line trace  */
-void DrawDebugLineTraceSingle(const UWorld* World, const FVector& Start, const FVector& End, EDrawDebugTrace::Type DrawDebugType, bool bHit, const FHitResult& OutHit, FLinearColor TraceColor, FLinearColor TraceHitColor, float DrawTime)
+void MyDrawDebugLineTraceSingle(const UWorld* World, const FVector& Start, const FVector& End, EDrawDebugTrace::Type DrawDebugType, bool bHit, const FHitResult& OutHit, FLinearColor TraceColor, FLinearColor TraceHitColor, float DrawTime)
 {
 	static const float KISMET_TRACE_DEBUG_IMPACTPOINT_SIZE = 16.f;
 	if (DrawDebugType != EDrawDebugTrace::None)
@@ -90,7 +90,7 @@ bool LineTraceSingleByProfile(const UObject* WorldContextObject,
 	UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull);
 	bool const bHit = World ? World->LineTraceSingleByProfile(OutHit, Start, End, ProfileName, Params) : false;
 	
-	DrawDebugLineTraceSingle(World, Start, End, DrawDebugType, bHit, OutHit, TraceColor, TraceHitColor, DrawTime);
+	MyDrawDebugLineTraceSingle(World, Start, End, DrawDebugType, bHit, OutHit, TraceColor, TraceHitColor, DrawTime);
 
 	return bHit;
 }
