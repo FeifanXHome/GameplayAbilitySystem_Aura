@@ -65,7 +65,7 @@ This project is a multiplayer-ready, modular action RPG system featuring ability
 - The main UI framework
 ![Gameplay](Docs/Flowchart/UE_Aura_UI.png)
 - Debugging
-![Gameplay](Docs/Flowchart/UE_Aura_debug.png)
+![Gameplay](Docs/Flowchart/UE_Aura_Debug.png)
 
 ## 🔨 Built With
 
