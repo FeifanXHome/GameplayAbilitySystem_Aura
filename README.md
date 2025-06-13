@@ -60,11 +60,11 @@ This project is a multiplayer-ready, modular action RPG system featuring ability
 - Building AI with BT and perception systems
 
 ### 🧭 Flowchart
-- The main gameplay framework
+- **The main gameplay framework**
 ![Gameplay](Docs/Flowchart/UE_Aura_Gameplay.png)
-- The main UI framework
+- **The main UI framework**
 ![Gameplay](Docs/Flowchart/UE_Aura_UI.png)
-- Debugging
+- **Debugging**
 ![Gameplay](Docs/Flowchart/UE_Aura_Debug.png)
 
 ## 🔨 Built With
@@ -90,7 +90,7 @@ This project is a multiplayer-ready, modular action RPG system featuring ability
 
 Based on the Udemy course:  
 [Unreal Engine 5 - Gameplay Ability System - Top Down RPG](https://www.udemy.com/course/unreal-engine-5-gas-top-down-rpg/)  
-Instructor: [Stephen Ulibarri](hhttps://www.udemy.com/user/stephen-ulibarri-3/)
+Instructor: [Stephen Ulibarri](https://www.udemy.com/user/stephen-ulibarri-3/)
 
 **Stephen Ulibarri** is a top-rated Unreal Engine C++ instructor on Udemy with 70,000+ students. His course is recognized for its practical approach to gameplay programming and system architecture.
 
